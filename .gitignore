@@ -37,3 +37,13 @@ out/
 .vscode/
 
 *.yml
+
+/src/main/java/com/mindbridge/controller/PostController.java
+/src/main/java/com/mindbridge/dto/PostCreateRequestDTO.java
+/src/main/java/com/mindbridge/dto/PostResponseDTO.java
+/src/main/java/com/mindbridge/dto/PostUpdateRequestDTO.java
+/src/main/java/com/mindbridge/entity/PostEntity.java
+/src/main/java/com/mindbridge/mapper/PostMapper.java
+/src/main/java/com/mindbridge/repository/PostRepository.java
+/src/main/java/com/mindbridge/service/PostService.java
+/src/main/java/com/mindbridge/service/PostServiceImpl.java
