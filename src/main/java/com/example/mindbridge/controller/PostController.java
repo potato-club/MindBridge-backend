@@ -1,10 +1,10 @@
-package com.mindbridge.controller;
+package com.example.mindbridge.controller;
 
 
-import com.mindbridge.dto.PostCreateRequestDTO;
-import com.mindbridge.dto.PostResponseDTO;
-import com.mindbridge.dto.PostUpdateRequestDTO;
-import com.mindbridge.service.PostService;
+import com.example.mindbridge.dto.PostCreateRequestDTO;
+import com.example.mindbridge.dto.PostResponseDTO;
+import com.example.mindbridge.dto.PostUpdateRequestDTO;
+import com.example.mindbridge.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

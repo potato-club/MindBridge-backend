@@ -1,4 +1,4 @@
-package com.example.mindbridgebackend.entity;
+package com.example.mindbridge.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

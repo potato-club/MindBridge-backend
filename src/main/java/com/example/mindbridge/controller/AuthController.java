@@ -1,9 +1,7 @@
-package com.example.mindbridgebackend.controller;
+package com.example.mindbridge.controller;
 
-import com.example.mindbridgebackend.dto.SignupRequest;
-import com.example.mindbridgebackend.dto.LoginRequest;
-import com.example.mindbridgebackend.dto.SignupRequest;
-import com.example.mindbridgebackend.service.AuthService;
+import com.example.mindbridge.dto.SignupRequest;
+import com.example.mindbridge.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +19,8 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest req) {
-
-    }
+//    @PostMapping("/signup")
+//    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequest req) {
+//
+//    }
 }

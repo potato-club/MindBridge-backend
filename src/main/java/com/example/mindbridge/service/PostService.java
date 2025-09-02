@@ -1,8 +1,8 @@
-package com.mindbridge.service;
+package com.example.mindbridge.service;
 
-import com.mindbridge.dto.PostCreateRequestDTO;
-import com.mindbridge.dto.PostResponseDTO;
-import com.mindbridge.dto.PostUpdateRequestDTO;
+import com.example.mindbridge.dto.PostCreateRequestDTO;
+import com.example.mindbridge.dto.PostResponseDTO;
+import com.example.mindbridge.dto.PostUpdateRequestDTO;
 
 import java.util.List;
 

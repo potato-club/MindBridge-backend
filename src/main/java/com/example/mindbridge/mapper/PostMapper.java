@@ -1,7 +1,7 @@
-package com.mindbridge.mapper;
+package com.example.mindbridge.mapper;
 
-import com.mindbridge.dto.PostResponseDTO;
-import com.mindbridge.entity.PostEntity;
+import com.example.mindbridge.dto.PostResponseDTO;
+import com.example.mindbridge.entity.PostEntity;
 
 public class PostMapper {
     public static PostResponseDTO toDTO(PostEntity post) {

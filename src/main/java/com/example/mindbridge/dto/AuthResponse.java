@@ -1,4 +1,4 @@
-package com.example.mindbridgebackend.dto;
+package com.example.mindbridge.dto;
 
 public class AuthResponse {
     private String token;

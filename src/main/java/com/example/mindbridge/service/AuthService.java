@@ -1,13 +1,10 @@
-package com.example.mindbridgebackend.service;
+package com.example.mindbridge.service;
 
-import com.example.mindbridgebackend.dto.LoginRequest;
-import com.example.mindbridgebackend.dto.SignupRequest;
-import com.example.mindbridgebackend.entity.User;
-import com.example.mindbridgebackend.repository.UserRepository;
+import com.example.mindbridge.dto.SignupRequest;
+import com.example.mindbridge.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

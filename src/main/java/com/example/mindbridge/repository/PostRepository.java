@@ -1,6 +1,6 @@
-package com.mindbridge.repository;
+package com.example.mindbridge.repository;
 
-import com.mindbridge.entity.PostEntity;
+import com.example.mindbridge.entity.PostEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

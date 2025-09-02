@@ -1,11 +1,11 @@
-package com.mindbridge.service;
+package com.example.mindbridge.service;
 
-import com.mindbridge.dto.PostCreateRequestDTO;
-import com.mindbridge.dto.PostResponseDTO;
-import com.mindbridge.dto.PostUpdateRequestDTO;
-import com.mindbridge.entity.PostEntity;
-import com.mindbridge.mapper.PostMapper;
-import com.mindbridge.repository.PostRepository;
+import com.example.mindbridge.dto.PostCreateRequestDTO;
+import com.example.mindbridge.dto.PostResponseDTO;
+import com.example.mindbridge.dto.PostUpdateRequestDTO;
+import com.example.mindbridge.entity.PostEntity;
+import com.example.mindbridge.mapper.PostMapper;
+import com.example.mindbridge.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
