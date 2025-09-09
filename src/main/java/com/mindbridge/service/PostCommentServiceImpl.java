@@ -1,0 +1,65 @@
+package com.mindbridge.service;
+
+import com.mindbridge.dto.PostCommentCreateRequestDTO;
+import com.mindbridge.dto.PostCommentResponseDTO;
+import com.mindbridge.dto.PostCommentUpdateRequestDTO;
+import com.mindbridge.entity.CommentEntity;
+import com.mindbridge.entity.PostEntity;
+import com.mindbridge.mapper.PostCommentMapper;
+import com.mindbridge.repository.PostCommentRepository;
+import com.mindbridge.repository.PostRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class PostCommentServiceImpl implements PostCommentService{
+    private final PostCommentRepository postCommentRepository;
+    private final PostRepository postRepository;
+
+    @Override
+    @Transactional
+    public PostCommentResponseDTO createComment(PostCommentCreateRequestDTO commentCreateRequestDTO) {
+        PostEntity postEntity = postRepository.findById(commentCreateRequestDTO.getPostId())
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        CommentEntity commentEntity = CommentEntity.builder()
+                .userId(commentCreateRequestDTO.getUserId())
+                .postId(postEntity.getPostId())
+                .content(commentCreateRequestDTO.getContent())
+                .build();
+
+        CommentEntity saved = postCommentRepository.save(commentEntity);
+        return PostCommentMapper.commentToDTO(saved);
+    }
+
+    @Override
+    @Transactional
+    public List<PostCommentResponseDTO> getCommentsByPost(Long postId) {
+        return postCommentRepository.findByPostIdAndParentIsNull(postId)
+                .stream()
+                .map(PostCommentMapper::commentToDTO)
+                .toList();
+    }
+
+    @Override
+    public PostCommentResponseDTO updateComment(Long id, PostCommentUpdateRequestDTO commentUpdateRequestDTO) {
+        CommentEntity commentEntity = postCommentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
+        commentEntity.update(commentUpdateRequestDTO.getContent());
+        return PostCommentMapper.commentToDTO(commentEntity);
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long id) {
+        if(!postCommentRepository.existsById(id)) {
+            throw new IllegalArgumentException("댓글을 찾을 수 없습니다.");
+        }
+        postCommentRepository.deleteById(id);
+    }
+
+}
