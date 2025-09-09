@@ -25,10 +25,6 @@ public class PostEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private PostEntity postId;
-
     private Category category;
 
     @Column(nullable = false, length = 50)
