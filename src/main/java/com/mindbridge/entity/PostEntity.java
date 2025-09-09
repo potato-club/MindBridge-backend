@@ -1,5 +1,6 @@
 package com.mindbridge.entity;
 
+import com.mindbridge.entity.enums.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,13 +29,7 @@ public class PostEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private PostEntity postId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
-    private BoradEntity boardId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity categoryId;
+    private Category category;
 
     @Column(nullable = false, length = 50)
     private String title;
