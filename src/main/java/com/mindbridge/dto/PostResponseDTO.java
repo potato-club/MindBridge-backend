@@ -1,18 +1,16 @@
 package com.mindbridge.dto;
 
+import com.mindbridge.entity.enums.Category;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class PostResponseDTO {
     private Long id;
     private Long userId;
-    private Long  boardId;
-    private Long categoryId;
+    private Category category;
     private String title;
     private String content;
     private Boolean isAnonymous;

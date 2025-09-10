@@ -23,8 +23,7 @@ public class PostServiceImpl implements PostService {
     public PostResponseDTO createPost(PostCreateRequestDTO requestDTO) {
         PostEntity post = PostEntity.builder()
                 .userId(requestDTO.getUserId())
-                .boardId(requestDTO.getBoardId())
-                .categoryId(requestDTO.getCategoryId())
+                .category(requestDTO.getCategory())
                 .title(requestDTO.getTitle())
                 .content(requestDTO.getContent())
                 .isAnonymous(requestDTO.getIsAnonymous())

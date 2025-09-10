@@ -1,16 +1,12 @@
 package com.mindbridge.dto;
 
-import lombok.AllArgsConstructor;
+import com.mindbridge.entity.enums.Category;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class PostCreateRequestDTO {
     private Long userId;
-    private Long boardId;
-    private Long categoryId;
+    private Category category;
     private String title;
     private String content;
     private Boolean isAnonymous;
