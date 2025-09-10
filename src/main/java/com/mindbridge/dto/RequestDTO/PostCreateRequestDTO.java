@@ -1,4 +1,4 @@
-package com.mindbridge.dto;
+package com.mindbridge.dto.RequestDTO;
 
 import com.mindbridge.entity.enums.Category;
 import lombok.Data;

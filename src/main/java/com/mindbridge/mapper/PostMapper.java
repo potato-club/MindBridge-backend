@@ -1,6 +1,6 @@
 package com.mindbridge.mapper;
 
-import com.mindbridge.dto.PostResponseDTO;
+import com.mindbridge.dto.ResponseDTO.PostResponseDTO;
 import com.mindbridge.entity.PostEntity;
 
 public class PostMapper {
