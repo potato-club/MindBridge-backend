@@ -1,31 +1,80 @@
 package com.example.mindbridge.service;
 
-import com.example.mindbridge.dto.SignupRequest;
+import com.example.mindbridge.dto.ApiResponseDTO;
+import com.example.mindbridge.dto.LoginRequestDTO;
+import com.example.mindbridge.dto.SignupRequestDTO;
+import com.example.mindbridge.entity.UserEntity;
 import com.example.mindbridge.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.example.mindbridge.security.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-@Service
-@AllArgsConstructor
-@NoArgsConstructor
-public class AuthService {
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private AuthenticationManager authenticationManager;
+import java.time.LocalDateTime;
 
-    public void signup(SignupRequest req) {
-        if (userRepository.existsByUsername(req.getUsername())) {
+@Service
+@RequiredArgsConstructor
+public class AuthService{
+
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    public UserEntity signup(SignupRequestDTO req) {
+        // 아이디 중복 확인
+        if (userRepository.existsByUserId(req.getUserid())) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
-        // 코드 수정
+
+        // 닉네임 중복 확인
+        if (userRepository.existsByNickname(req.getNickname())) {
+            throw new RuntimeException("이미 존재하는 닉네임입니다.");
+        }
+
+        // 전화번호 중복 확인
+        if (userRepository.existsByPhoneNumber(req.getPhoneNumber())) {
+            throw new RuntimeException("이미 등록된 전화번호입니다.");
+        }
+
+        // 비밀번호 확인
+        if (!req.getPassword().equals(req.getConfirmPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 유저 저장
+        UserEntity user = UserEntity.builder()
+                .userid(req.getUserid())
+                .username(req.getUsername())
+                .nickname(req.getUsername())
+                .password(passwordEncoder.encode(req.getPassword()))
+                .phoneNumber(req.getPhoneNumber())
+                .gender(req.getGender())
+                .birthDate(req.getBirthDate())
+                .verified(false)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        userRepository.save(user);
     }
-//    public String login(LoginRequest req) {
-//        var token = new UsernamePasswordAuthenticationToken();
-//        authenticationManager.authenticate(token);
-//        var user = userRepository.findByUsername(req.getUsername()).orElseThrow();
-//        return "user";
-//    }
+    public ApiResponseDTO<String> login(LoginRequestDTO req) {
+        UserEntity user = userRepository.findByUserid(req.getUserid())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
+
+        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+            return new ApiResponseDTO<>(false, "비밀번호가 일치하지 않습니다.", null);
+        }
+
+        String token = jwtTokenProvider.createToken(user.getUserid());
+
+        return new ApiResponseDTO<>(true, "로그인에 성공하였습니다.", token);
+        //return jwtUtil.generateToken(user.getUserid());
+    }
 }

@@ -1,6 +1,6 @@
 package com.example.mindbridge.repository;
 
-import com.example.mindbridge.entity.User;
+import com.example.mindbridge.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
@@ -8,7 +8,13 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
-    boolean existsByUsername(String username);
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
+    Optional<UserEntity> findByUserid(String userid);
+    Optional<UserEntity> findByNickname(String nickname);
+    Optional<UserEntity> findByPhoneNumber(String phoneNumber);
+    boolean existsByUserId(String userid);
+    boolean existsByNickname(String nickname);
+    boolean existsByPhoneNumber(String phoneNumber);
+
+    UserEntity findByUserid(String userid);
 }

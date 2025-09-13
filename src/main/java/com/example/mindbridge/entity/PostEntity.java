@@ -21,11 +21,27 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JoinColumn(name = "user_id", nullable = false)
     private Long userId;
-    private Long boardId;
-    private Long categoryId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private PostEntity postId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "board_id", nullable = false)
+    private BoradEntity boardId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryEntity categoryId;
+
+    @Column(nullable = false, length = 50)
     private String title;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
     private Boolean isAnonymous;
     private int viewCount;
     private int likeCount;
