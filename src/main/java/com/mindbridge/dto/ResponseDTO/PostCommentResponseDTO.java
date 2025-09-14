@@ -1,7 +1,5 @@
-package com.mindbridge.dto;
+package com.mindbridge.dto.ResponseDTO;
 
-import com.mindbridge.entity.CommentEntity;
-import com.mindbridge.entity.PostEntity;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,8 +12,8 @@ import java.util.List;
 public class PostCommentResponseDTO {
     private Long id;
     private Long userId;
-    private PostEntity postId;
-    private CommentEntity parent;
+    private Long postId;
+    private Long parent;
 
     @Builder.Default
     private List<PostCommentResponseDTO> replies = new ArrayList<>();

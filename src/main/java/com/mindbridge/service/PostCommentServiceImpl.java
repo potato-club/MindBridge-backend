@@ -1,8 +1,8 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.PostCommentCreateRequestDTO;
-import com.mindbridge.dto.PostCommentResponseDTO;
-import com.mindbridge.dto.PostCommentUpdateRequestDTO;
+import com.mindbridge.dto.RequestDTO.PostCommentCreateRequestDTO;
+import com.mindbridge.dto.ResponseDTO.PostCommentResponseDTO;
+import com.mindbridge.dto.RequestDTO.PostCommentUpdateRequestDTO;
 import com.mindbridge.entity.CommentEntity;
 import com.mindbridge.entity.PostEntity;
 import com.mindbridge.mapper.PostCommentMapper;
@@ -82,6 +82,7 @@ public class PostCommentServiceImpl implements PostCommentService{
     }
 
     @Override
+    @Transactional
     public PostCommentResponseDTO updateComment(Long id, PostCommentUpdateRequestDTO commentUpdateRequestDTO) {
         CommentEntity commentEntity = postCommentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
