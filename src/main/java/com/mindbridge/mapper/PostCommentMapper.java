@@ -10,7 +10,7 @@ public class PostCommentMapper {
                 .userId(commentEntity.getUserId())
                 .postId(commentEntity.getPostId())
                 .parent(commentEntity.getParent())
-                .replies(commentEntity.getReplies())
+//                .replies(commentEntity.getReplies())
                 .content(commentEntity.getContent())
                 .isAnonymous(commentEntity.getIsAnonymous())
                 .build();

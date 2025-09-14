@@ -26,10 +26,18 @@ public class PostCommentServiceImpl implements PostCommentService{
         PostEntity postEntity = postRepository.findById(commentCreateRequestDTO.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
 
+        CommentEntity parent = null;
+        if (commentCreateRequestDTO.getParentId() != null) {
+            parent = postCommentRepository.findById(commentCreateRequestDTO.getParentId())
+                    .orElseThrow(() -> new IllegalArgumentException("부모 댓글을 찾을 수 없습니다."));
+        }
+
         CommentEntity commentEntity = CommentEntity.builder()
                 .userId(commentCreateRequestDTO.getUserId())
-                .postId(postEntity.getPostId())
+                .postId(postEntity)
+                .parent(parent)
                 .content(commentCreateRequestDTO.getContent())
+                .isAnonymous(commentCreateRequestDTO.getIsAnonymous())
                 .build();
 
         CommentEntity saved = postCommentRepository.save(commentEntity);
@@ -39,10 +47,38 @@ public class PostCommentServiceImpl implements PostCommentService{
     @Override
     @Transactional
     public List<PostCommentResponseDTO> getCommentsByPost(Long postId) {
-        return postCommentRepository.findByPostIdAndParentIsNull(postId)
+        PostEntity postEntity = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        return postCommentRepository.findByPostIdAndParentIsNull(postEntity)
                 .stream()
                 .map(PostCommentMapper::commentToDTO)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public List<PostCommentResponseDTO> getCommentsWithRepliesByPost(Long postId) {
+        PostEntity postEntity = postRepository.findById(postId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+
+        List<CommentEntity> topLevelComments = postCommentRepository.findByPostIdAndParentIsNull(postEntity);
+
+        return topLevelComments.stream()
+                .map(this::convertToDTOWithReplies)
+                .toList();
+    }
+    private PostCommentResponseDTO convertToDTOWithReplies(CommentEntity commentEntity) {
+        PostCommentResponseDTO postCommentResponseDTO = PostCommentMapper.commentToDTO(commentEntity);
+
+        List<PostCommentResponseDTO> replyDTOs =
+                commentEntity.getReplies()
+                .stream()
+                .map(this::convertToDTOWithReplies)
+                .toList();
+
+        postCommentResponseDTO.setReplies(replyDTOs);
+        return postCommentResponseDTO;
     }
 
     @Override
@@ -56,10 +92,12 @@ public class PostCommentServiceImpl implements PostCommentService{
     @Override
     @Transactional
     public void deleteComment(Long id) {
-        if(!postCommentRepository.existsById(id)) {
-            throw new IllegalArgumentException("댓글을 찾을 수 없습니다.");
+        CommentEntity commentEntity = postCommentRepository.findById(id)
+                        .orElseThrow(() -> new IllegalArgumentException("댓글을 찾을 수 없습니다."));
+
+        if (!commentEntity.getReplies().isEmpty()) {
+            postCommentRepository.updateParentToNullByParentId(id);
         }
         postCommentRepository.deleteById(id);
     }
-
 }
