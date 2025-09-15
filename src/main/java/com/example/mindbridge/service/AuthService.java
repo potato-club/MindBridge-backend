@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService{
 
     private final UserRepository userRepository;
@@ -62,7 +61,7 @@ public class AuthService{
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        userRepository.save(user);
+        return userRepository.save(user);
     }
     public ApiResponseDTO<String> login(LoginRequestDTO req) {
         UserEntity user = userRepository.findByUserid(req.getUserid())
