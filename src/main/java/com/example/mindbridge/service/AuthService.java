@@ -1,10 +1,8 @@
 package com.example.mindbridge.service;
 
-import com.example.mindbridge.dto.ApiResponseDTO;
 import com.example.mindbridge.dto.SignupRequestDTO;
 import com.example.mindbridge.entity.UserEntity;
 import com.example.mindbridge.repository.UserRepository;
-import com.example.mindbridge.security.JwtTokenProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +13,10 @@ public class AuthService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     public UserEntity signup(SignupRequestDTO req) {
