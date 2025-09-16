@@ -4,6 +4,8 @@ import com.mindbridge.dto.RequestDTO.PostCreateRequestDTO;
 import com.mindbridge.dto.ResponseDTO.PostResponseDTO;
 import com.mindbridge.dto.RequestDTO.PostUpdateRequestDTO;
 import com.mindbridge.entity.PostEntity;
+import com.mindbridge.error.ErrorCode;
+import com.mindbridge.error.customExceptions.PostNotFoundException;
 import com.mindbridge.mapper.PostMapper;
 import com.mindbridge.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,22 +18,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-
     private final PostRepository postRepository;
 
     @Override
+    @Transactional
     public PostResponseDTO createPost(PostCreateRequestDTO requestDTO) {
-        PostEntity post = PostEntity.builder()
-                .userId(requestDTO.getUserId())
-                .category(requestDTO.getCategory())
-                .title(requestDTO.getTitle())
-                .content(requestDTO.getContent())
-                .isAnonymous(requestDTO.getIsAnonymous())
-                .viewCount(0)
-                .likeCount(0)
-                .commentCount(0)
-                .build();
-
+        PostEntity post = PostMapper.toEntity(requestDTO);
         PostEntity saved  = postRepository.save(post);
         return PostMapper.toDTO(saved);
     }
@@ -49,22 +41,21 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public PostResponseDTO getPost(Long id) {
         PostEntity postEntity = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new PostNotFoundException(ErrorCode.POST_NOT_FOUND));
 
         postEntity.increaseViewCount();
-        PostEntity updatedPost = postRepository.save(postEntity);
-        return PostMapper.toDTO(updatedPost);
+        return PostMapper.toDTO(postEntity);
     }
 
     @Override
     @Transactional
     public PostResponseDTO updatePost(Long id, PostUpdateRequestDTO postUpdateRequestDTO) {
         PostEntity postEntity = postRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("게시글을 찾을 수 없습니다."));
-        postEntity.update(
-                postUpdateRequestDTO.getTitle(),
-                postUpdateRequestDTO.getContent()
+                .orElseThrow(() -> new PostNotFoundException(ErrorCode.POST_NOT_FOUND));
 
+        postEntity.update(
+                postUpdateRequestDTO.title(),
+                postUpdateRequestDTO.content()
         );
         return PostMapper.toDTO(postEntity);
     }
