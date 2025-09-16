@@ -1,7 +1,6 @@
 package com.example.mindbridge.controller;
 
 import com.example.mindbridge.dto.ApiResponseDTO;
-import com.example.mindbridge.dto.LoginRequestDTO;
 import com.example.mindbridge.dto.SignupRequestDTO;
 import com.example.mindbridge.entity.UserEntity;
 import com.example.mindbridge.service.AuthService;
@@ -28,10 +27,5 @@ public class AuthController {
         return ResponseEntity.ok(
                 new ApiResponseDTO<>(true, "회원가입이 성공적으로 완료되었습니다.", user)
         );
-    }
-
-    @PostMapping("/login")
-    public ApiResponseDTO<String> login(@RequestBody LoginRequestDTO req) {
-        return authService.login(req);
     }
 }
