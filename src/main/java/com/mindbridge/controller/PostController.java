@@ -1,9 +1,9 @@
 package com.mindbridge.controller;
 
 
-import com.mindbridge.dto.PostCreateRequestDTO;
-import com.mindbridge.dto.PostResponseDTO;
-import com.mindbridge.dto.PostUpdateRequestDTO;
+import com.mindbridge.dto.RequestDTO.PostCreateRequestDTO;
+import com.mindbridge.dto.ResponseDTO.PostResponseDTO;
+import com.mindbridge.dto.RequestDTO.PostUpdateRequestDTO;
 import com.mindbridge.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,8 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostResponseDTO> createPost(@RequestBody PostCreateRequestDTO requestDTO) {
+    public ResponseEntity<PostResponseDTO> createPost(
+            @RequestBody PostCreateRequestDTO requestDTO) {
         return ResponseEntity.ok(postService.createPost(requestDTO));
     }
 
