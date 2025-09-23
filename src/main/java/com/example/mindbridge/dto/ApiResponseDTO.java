@@ -14,8 +14,4 @@ public class ApiResponseDTO<T> {
     public static <T> ApiResponseDTO<T> success(String message, T data) {
         return new ApiResponseDTO<>(true, message, data);
     }
-
-    public static <T> ApiResponseDTO<T> success(String message) {
-        return new ApiResponseDTO<>(false, message, null);
-    }
 }

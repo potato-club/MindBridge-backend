@@ -40,12 +40,17 @@ public class FindAccountService {
     }
 
     public void resetPassword(ResetPasswordRequestDTO req) {
+        UserEntity user = userRepository.findByUserid(req.getUserid())
+                .orElseThrow(() -> new RuntimeException("계정을 찾을 수 없습니다."));
+
         if (!req.getNewPassword().equals(req.getConfirmPassword())) {
             throw new RuntimeException("새 비밀번호가 일치하지 않습니다.");
         }
 
-        UserEntity user = userRepository.findByUserid(req.getUserid())
-                .orElseThrow(() -> new RuntimeException("계정을 찾을 수 없습니다."));
+
+
+
+
 
         user.setPassword(passwordEncoder.encode(req.getNewPassword()));
         userRepository.save(user);
