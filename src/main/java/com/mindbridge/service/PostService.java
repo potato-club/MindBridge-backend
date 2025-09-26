@@ -1,15 +1,17 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.RequestDTO.PostCreateRequestDTO;
-import com.mindbridge.dto.ResponseDTO.PostResponseDTO;
-import com.mindbridge.dto.RequestDTO.PostUpdateRequestDTO;
+import com.mindbridge.dto.RequestDto.PostCreateRequestDto;
+import com.mindbridge.dto.ResponseDto.PostResponseDto;
+import com.mindbridge.dto.RequestDto.PostUpdateRequestDto;
 
 import java.util.List;
 
 public interface PostService {
-    PostResponseDTO createPost(PostCreateRequestDTO requestDTO);
-    List<PostResponseDTO> getAllPosts();
-    PostResponseDTO getPost(Long id);
-    PostResponseDTO updatePost(Long id, PostUpdateRequestDTO requestDTO);
+    PostResponseDto createPost(PostCreateRequestDto requestDTO);
+    List<PostResponseDto> getAllPosts();
+    PostResponseDto getPost(Long id);
+    PostResponseDto updatePost(Long id, PostUpdateRequestDto requestDTO);
     void deletePost(Long id);
+    boolean toggleLike(Long postId, Long userId);
+    List<PostResponseDto> getLikedPosts(Long userId);
 }
