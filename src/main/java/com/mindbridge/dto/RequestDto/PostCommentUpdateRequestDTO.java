@@ -1,4 +1,4 @@
-package com.mindbridge.dto.RequestDTO;
+package com.mindbridge.dto.RequestDto;
 
 import lombok.Data;
 

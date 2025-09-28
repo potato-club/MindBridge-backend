@@ -1,8 +1,8 @@
-package com.mindbridge.dto.ResponseDTO;
+package com.mindbridge.dto.ResponseDto;
 
 import com.mindbridge.entity.enums.Category;
 
-public record PostResponseDTO (
+public record PostResponseDto(
         Long id,
         Long userId,
         Category category,
