@@ -1,8 +1,9 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.RequestDTO.PostCommentCreateRequestDTO;
-import com.mindbridge.dto.ResponseDTO.PostCommentResponseDTO;
-import com.mindbridge.dto.RequestDTO.PostCommentUpdateRequestDTO;
+
+import com.mindbridge.dto.RequestDto.PostCommentCreateRequestDto;
+import com.mindbridge.dto.RequestDto.PostCommentUpdateRequestDto;
+import com.mindbridge.dto.ResponseDto.PostCommentResponseDto;
 import com.mindbridge.entity.CommentEntity;
 import com.mindbridge.entity.PostEntity;
 import com.mindbridge.error.ErrorCode;
@@ -14,93 +15,84 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Service
 @RequiredArgsConstructor
-public class PostCommentServiceImpl implements PostCommentService{
+public class PostCommentServiceImpl implements PostCommentService {
+    private final PostCommentMapper postCommentMapper;
     private final PostCommentRepository postCommentRepository;
     private final PostRepository postRepository;
+    private final PostRedisService postRedisService;
 
     @Override
     @Transactional
-    public PostCommentResponseDTO createComment(PostCommentCreateRequestDTO commentCreateRequestDTO) {
-        PostEntity postEntity = postRepository.findById(commentCreateRequestDTO.getPostId())
+    public PostCommentResponseDto createComment(Long postId, PostCommentCreateRequestDto postCommentCreateRequestDto) {
+        PostEntity post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ErrorCode.POST_NOT_FOUND));
 
-        CommentEntity parent = null;
-        if (commentCreateRequestDTO.getParentId() != null) {
-            parent = postCommentRepository.findById(commentCreateRequestDTO.getParentId())
-                    .orElseThrow(() -> new IllegalArgumentException("부모 댓글을 찾을 수 없습니다."));
+
+        // 2. parentId 결정
+        Long parentId = postCommentCreateRequestDto.parentId();
+
+        if (parentId != null) {
+            // 대댓글: 부모 댓글 존재 여부 확인
+            boolean parentExists = postCommentRepository.existsById(parentId);
+            if (!parentExists) {
+                throw new PostNotFoundException(ErrorCode.COMMENT_NOT_FOUND);
+            }
         }
 
-        CommentEntity commentEntity = CommentEntity.builder()
-                .userId(commentCreateRequestDTO.getUserId())
-                .postId(postEntity)
-                .parent(parent)
-                .content(commentCreateRequestDTO.getContent())
-                .isAnonymous(commentCreateRequestDTO.getIsAnonymous())
+        // 3. 댓글 엔티티 생성
+        CommentEntity comment = CommentEntity.builder()
+                .userId(postCommentCreateRequestDto.userId())
+                .postId(post.getId())
+                .content(postCommentCreateRequestDto.content())
+                .parentId(parentId)
+                .isAnonymous(postCommentCreateRequestDto.isAnonymous())
+                .createdAt(LocalDateTime.now())
                 .build();
+        comment = postCommentRepository.save(comment);
 
-        CommentEntity saved = postCommentRepository.save(commentEntity);
-        return PostCommentMapper.commentToDTO(saved);
+        return postCommentMapper.toDto(comment);
     }
 
     @Override
     @Transactional
-    public List<PostCommentResponseDTO> getCommentsByPost(Long postId) {
-        PostEntity postEntity = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(ErrorCode.POST_NOT_FOUND));
-
-        return postCommentRepository.findByPostIdAndParentIsNull(postEntity)
-                .stream()
-                .map(PostCommentMapper::commentToDTO)
-                .toList();
-    }
-
-    @Override
-    @Transactional
-    public List<PostCommentResponseDTO> getCommentsWithRepliesByPost(Long postId) {
-        PostEntity postEntity = postRepository.findById(postId)
-                .orElseThrow(() -> new PostNotFoundException(ErrorCode.POST_NOT_FOUND));
-
-        List<CommentEntity> topLevelComments = postCommentRepository.findByPostIdAndParentIsNull(postEntity);
-
-        return topLevelComments.stream()
-                .map(this::convertToDTOWithReplies)
-                .toList();
-    }
-    private PostCommentResponseDTO convertToDTOWithReplies(CommentEntity commentEntity) {
-        PostCommentResponseDTO postCommentResponseDTO = PostCommentMapper.commentToDTO(commentEntity);
-
-        List<PostCommentResponseDTO> replyDTOs =
-                commentEntity.getReplies()
-                .stream()
-                .map(this::convertToDTOWithReplies)
-                .toList();
-
-        postCommentResponseDTO.setReplies(replyDTOs);
-        return postCommentResponseDTO;
-    }
-
-    @Override
-    @Transactional
-    public PostCommentResponseDTO updateComment(Long id, PostCommentUpdateRequestDTO commentUpdateRequestDTO) {
-        CommentEntity commentEntity = postCommentRepository.findById(id)
+    public PostCommentResponseDto updateComment(Long id, PostCommentUpdateRequestDto dto) {
+        CommentEntity comment = postCommentRepository.findById(id)
                 .orElseThrow(() -> new PostNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
-        commentEntity.update(commentUpdateRequestDTO.getContent());
-        return PostCommentMapper.commentToDTO(commentEntity);
+
+        comment.update(dto.content());
+
+        return postCommentMapper.toDto(comment);
     }
 
     @Override
     @Transactional
     public void deleteComment(Long id) {
-        CommentEntity commentEntity = postCommentRepository.findById(id)
-                        .orElseThrow(() -> new PostNotFoundException(ErrorCode.COMMENT_NOT_FOUND));
-
-        if (!commentEntity.getReplies().isEmpty()) {
-            postCommentRepository.updateParentToNullByParentId(id);
+        if (!postCommentRepository.existsById(id)) {
+            throw new PostNotFoundException(ErrorCode.COMMENT_NOT_FOUND);
         }
         postCommentRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean likeComment(Long commentId, Long userId) {
+        return postRedisService.addLike("comment:" + commentId, String.valueOf(userId));
+    }
+
+    @Override
+    public boolean unlikeComment(Long commentId, Long userId) {
+        return postRedisService.removeLike("comment:" + commentId, String.valueOf(userId));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<PostCommentResponseDto> getCommentsByPost(Long postId) {
+        List<CommentEntity> allComments = postCommentRepository.findByPostId(postId);
+        return postCommentMapper.toDtoList(allComments);
     }
 }

@@ -23,22 +23,23 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 
-
-
-	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
 
 	//aws
 	implementation 'software.amazon.awssdk:s3:2.25.15'
 	implementation 'software.amazon.awssdk:auth:2.25.15'
 
 	//swagger
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6'
 
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'

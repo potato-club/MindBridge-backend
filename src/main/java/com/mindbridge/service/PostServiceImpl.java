@@ -1,12 +1,15 @@
 package com.mindbridge.service;
 
 import com.mindbridge.dto.RequestDto.PostCreateRequestDto;
+import com.mindbridge.dto.ResponseDto.PostCommentResponseDto;
 import com.mindbridge.dto.ResponseDto.PostResponseDto;
 import com.mindbridge.dto.RequestDto.PostUpdateRequestDto;
 import com.mindbridge.entity.PostEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.PostNotFoundException;
+import com.mindbridge.mapper.PostCommentMapper;
 import com.mindbridge.mapper.PostMapper;
+import com.mindbridge.repository.PostCommentRepository;
 import com.mindbridge.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,9 +21,10 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
-
     private final PostRepository postRepository;
+    private final PostCommentRepository postCommentRepository;
     private final PostRedisService redisService;
+    private final PostCommentMapper postCommentMapper;
 
     @Override
     @Transactional
@@ -33,20 +37,20 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional(readOnly = true)
     public List<PostResponseDto> getAllPosts() {
-        return postRepository.findAll()
-                .stream()
-                .map(PostMapper::toDTO)
-                .toList();
+        List<PostEntity> allPosts = postRepository.findAll();
+        return PostMapper.toDTOList(allPosts);
     }
 
     @Override
     @Transactional
-    public PostResponseDto getPost(Long id) {
-        PostEntity postEntity = postRepository.findById(id)
+    public PostResponseDto getPost(Long postId) {
+        PostEntity postEntity = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ErrorCode.POST_NOT_FOUND));
+        List<PostCommentResponseDto> comments = postCommentRepository.findByPostId(postId).stream()
+                .map(postCommentMapper::toDto)
+                .toList();
 
-        postEntity.increaseViewCount();
-        return PostMapper.toDTO(postEntity);
+        return PostMapper.toDTO(postEntity, comments);
     }
 
     @Override
