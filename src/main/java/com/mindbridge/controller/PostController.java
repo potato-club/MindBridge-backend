@@ -29,21 +29,21 @@ public class PostController {
         return ResponseEntity.ok(postService.getAllPosts());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long id) {
-        return ResponseEntity.ok(postService.getPost(id));
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.getPost(postId));
     }
 
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long id,
+    @PutMapping("/{postId}")
+    public ResponseEntity<PostResponseDto> updatePost(@PathVariable Long postId,
                                                       @RequestBody PostUpdateRequestDto requestDTO) {
-        return ResponseEntity.ok(postService.updatePost(id, requestDTO));
+        return ResponseEntity.ok(postService.updatePost(postId, requestDTO));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long id) {
-        postService.deletePost(id);
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
         return ResponseEntity.noContent().build();
     }
 

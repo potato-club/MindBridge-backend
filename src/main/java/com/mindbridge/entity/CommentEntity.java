@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -22,18 +20,10 @@ public class CommentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long userId;
+    private Long postId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private PostEntity postId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_comment_id")
-    private CommentEntity parent;
-
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<CommentEntity> replies = new ArrayList<>();
+    @Column(name = "parent_id")
+    private Long parentId;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
@@ -44,18 +34,11 @@ public class CommentEntity {
     @Column(name = "like_count")
     private int likeCount;
 
-    @Column(name = "dislike_count")
-    private int disLikeCount;
-
     @CreationTimestamp
     private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
 
     public void update (String content) {
         this.content = content;
     }
+
 }
