@@ -1,13 +1,13 @@
 package com.mindbridge.mapper;
 
-import com.mindbridge.dto.RequestDTO.PostCreateRequestDTO;
-import com.mindbridge.dto.ResponseDTO.PostResponseDTO;
+import com.mindbridge.dto.RequestDto.PostCreateRequestDto;
+import com.mindbridge.dto.ResponseDto.PostResponseDto;
 import com.mindbridge.entity.PostEntity;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PostMapper {
-    public static PostEntity toEntity(PostCreateRequestDTO requestDTO) {
+    public static PostEntity toEntity(PostCreateRequestDto requestDTO) {
         return PostEntity.builder()
                 .userId(requestDTO.userId())
                 .category(requestDTO.category())
@@ -20,8 +20,8 @@ public class PostMapper {
                 .build();
     }
 
-    public static PostResponseDTO toDTO(PostEntity post) {
-        return new PostResponseDTO(
+    public static PostResponseDto toDTO(PostEntity post) {
+        return new PostResponseDto(
                 post.getId(),
                 post.getUserId(),
                 post.getCategory(),
