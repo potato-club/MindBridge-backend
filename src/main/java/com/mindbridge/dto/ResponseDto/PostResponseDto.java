@@ -1,8 +1,10 @@
-package com.mindbridge.dto.ResponseDTO;
+package com.mindbridge.dto.ResponseDto;
 
 import com.mindbridge.entity.enums.Category;
 
-public record PostResponseDTO (
+import java.util.List;
+
+public record PostResponseDto(
         Long id,
         Long userId,
         Category category,
@@ -11,5 +13,6 @@ public record PostResponseDTO (
         Boolean isAnonymous,
         int viewCount,
         int likeCount,
-        int commentCount
+        int commentCount,
+        List<PostCommentResponseDto> comments
 ) {}
