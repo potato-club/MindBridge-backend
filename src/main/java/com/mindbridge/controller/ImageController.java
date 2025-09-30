@@ -2,7 +2,7 @@ package com.mindbridge.controller;
 
 import com.mindbridge.dto.RequestDTO.ProfileImageDeleteRequestDto;
 import com.mindbridge.dto.ResponseDTO.ProfileImageMainResponseDto;
-import com.mindbridge.dto.ResponseDTO.ProfileImageUploadResponseDto;
+import com.mindbridge.dto.RequestDto.ProfileImageUploadRequestDto;
 import com.mindbridge.entity.ProfileImageEntity;
 import com.mindbridge.service.ProfileImageService;
 import com.mindbridge.service.S3ImageService;
@@ -36,11 +36,11 @@ public class ImageController {
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<ProfileImageUploadResponseDto> uploadProfileImage(@PathVariable Long userId,
+    public ResponseEntity<ProfileImageUploadRequestDto> uploadProfileImage(@PathVariable Long userId,
                                                                             @RequestPart(value = "image", required = false) MultipartFile image) {
         String url = s3ImageService.upload(image, userId);
 
-        return ResponseEntity.ok(new ProfileImageUploadResponseDto(url));
+        return ResponseEntity.ok(new ProfileImageUploadRequestDto(url));
     }
 
     @DeleteMapping
