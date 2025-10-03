@@ -19,13 +19,10 @@ public class ProfileImageEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private UserEntity userId;
-
+    @Column(name = "user_id")
     private Long userId;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "profileUrl", nullable = false, length = 255)
     private String url;
 
     @Column(name = "recorded_at", nullable = false)
