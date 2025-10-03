@@ -19,19 +19,22 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Column(name = "profileImage_id")
+    private Long profileImageId;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "username", nullable = false, length = 50)
+    private String username;
+
+    @Column(name = "nickname", nullable = false, length = 50)
     private String nickname;
 
-    @Column(nullable = false, length = 50)
-    private String userid;
+    @Column(name = "loginId", nullable = false, length = 50)
+    private String loginId;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(length = 30)
+    @Column(name = "phonenum", length = 30)
     private String phoneNumber;
 
     @Column(name = "birth_date")
@@ -40,7 +43,7 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(nullable = false)
+    @Column(name = "verified", nullable = false)
     private boolean verified;
 
     @Column(name = "created_at", nullable = false, updatable = false)

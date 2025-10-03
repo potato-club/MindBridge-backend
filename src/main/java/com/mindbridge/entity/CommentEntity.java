@@ -19,13 +19,19 @@ public class CommentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+
+    @Column(name = "post_id")
     private Long postId;
+
+
+    @Column(name = "user_id")
+    private Long userId;
+
 
     @Column(name = "parent_id")
     private Long parentId;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
     @Column(name = "is_anonymous")
@@ -35,6 +41,7 @@ public class CommentEntity {
     private int likeCount;
 
     @CreationTimestamp
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     public void update (String content) {

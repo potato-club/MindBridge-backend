@@ -28,15 +28,22 @@ public class PostEntity {
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "title", nullable = false, length = 50)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "is_anonymous")
     private Boolean isAnonymous;
+
+    @Column(name = "view_count")
     private int viewCount;
+
+    @Column(name = "like_count")
     private int likeCount;
+
+    @Column(name = "comment_count")
     private int commentCount;
 
     @CreationTimestamp
