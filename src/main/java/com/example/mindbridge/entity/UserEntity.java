@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
-@AllArgsConstructor
 @Builder
 @Table(name = "users")
 public class UserEntity {
@@ -18,19 +16,22 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "profileImage_id")
+    private Long profileImageId;
+
+    @Column(name = "username", nullable = false, length = 50)
     private String username;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column(name = "nickname", nullable = false, unique = true, length = 50)
     private String nickname;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String userid;
+    @Column(name = "loginId", nullable = false, unique = true, length = 50)
+    private String loginId;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(name = "phonenum", nullable = false, unique = true, length = 20)
     private String phoneNumber;
 
     @Column(name = "birth_date")
@@ -39,7 +40,7 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(nullable = false)
+    @Column(name = "verified", nullable = false)
     private boolean verified;
 
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -50,7 +51,7 @@ public class UserEntity {
 
     public UserEntity() {}
 
-    public UserEntity(String username, String password, String phoneNumber, LocalDate birthDate,
+    public UserEntity(String username, String nickname, String password, String phoneNumber, LocalDate birthDate,
                       Gender gender, boolean verified) {
         this.username = username;
         this.password = password;

@@ -6,8 +6,6 @@ import com.example.mindbridge.dto.SignupRequestDTO;
 import com.example.mindbridge.entity.UserEntity;
 import com.example.mindbridge.repository.UserRepository;
 import com.example.mindbridge.security.JwtTokenProvider;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +26,7 @@ public class AuthService{
 
     public UserEntity signup(SignupRequestDTO req) {
         // 아이디 중복 확인
-        if (userRepository.existsByUserId(req.getUserid())) {
+        if (userRepository.existsByLoginId(req.getLoginId())) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
 
@@ -49,7 +47,7 @@ public class AuthService{
 
         // 유저 저장
         UserEntity user = UserEntity.builder()
-                .userid(req.getUserid())
+                .loginId(req.getLoginId())
                 .username(req.getUsername())
                 .nickname(req.getUsername())
                 .password(passwordEncoder.encode(req.getPassword()))
@@ -64,14 +62,15 @@ public class AuthService{
         return userRepository.save(user);
     }
     public ApiResponseDTO<String> login(LoginRequestDTO req) {
-        UserEntity user = userRepository.findByUserid(req.getUserid())
+        UserEntity user = userRepository.findByLoginId(req.getLoginId())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             return new ApiResponseDTO<>(false, "비밀번호가 일치하지 않습니다.", null);
         }
 
-        String token = jwtTokenProvider.createToken(user.getUserid());
+        long validityInMilliseconds = 3600000;
+        String token = jwtTokenProvider.createToken(user.getId(), validityInMilliseconds);
 
         return new ApiResponseDTO<>(true, "로그인에 성공하였습니다.", token);
         //return jwtUtil.generateToken(user.getUserid());

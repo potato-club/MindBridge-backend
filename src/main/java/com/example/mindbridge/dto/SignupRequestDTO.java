@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public class SignupRequestDTO {
     @NotBlank
     @Size(min = 2, max = 20)
-    private String userid;
+    private String loginId;
 
     @NotBlank
     private String username;
