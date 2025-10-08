@@ -21,7 +21,7 @@ public class AuthService{
 
     public UserEntity signup(SignupRequestDTO req) {
         // 아이디 중복 확인
-        if (userRepository.existsByUserid(req.getUserid())) {
+        if (userRepository.existsByLoginId(req.getLoginId())) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");
         }
 
@@ -42,7 +42,7 @@ public class AuthService{
 
         // 유저 저장
         UserEntity user = UserEntity.builder()
-                .userid(req.getUserid())
+                .loginId(req.getLoginId())
                 .username(req.getUsername())
                 .nickname(req.getUsername())
                 .password(passwordEncoder.encode(req.getPassword()))
