@@ -6,10 +6,12 @@ import com.example.mindbridge.dto.SignupRequestDTO;
 import com.example.mindbridge.entity.UserEntity;
 import com.example.mindbridge.repository.UserRepository;
 import com.example.mindbridge.security.JwtTokenProvider;
+import com.example.mindbridge.security.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 public class AuthService{
@@ -17,11 +19,13 @@ public class AuthService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final TokenService tokenService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, TokenService tokenService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.tokenService = tokenService;
     }
 
     public UserEntity signup(SignupRequestDTO req) {
@@ -61,18 +65,19 @@ public class AuthService{
 
         return userRepository.save(user);
     }
-    public ApiResponseDTO<String> login(LoginRequestDTO req) {
+    public ApiResponseDTO<Map<String, String>> login(LoginRequestDTO req) {
         UserEntity user = userRepository.findByLoginId(req.getLoginId())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            return new ApiResponseDTO<>(false, "비밀번호가 일치하지 않습니다.", null);
+            return ApiResponseDTO.error("비밀번호가 일치하지 않습니다.");
         }
 
         long validityInMilliseconds = 3600000;
         String token = jwtTokenProvider.createToken(user.getId(), validityInMilliseconds);
 
-        return new ApiResponseDTO<>(true, "로그인에 성공하였습니다.", token);
-        //return jwtUtil.generateToken(user.getUserid());
+        Map<String, String> tokens = tokenService.generateToken(user.getId());
+
+        return new ApiResponseDTO<>(true, "로그인에 성공하였습니다.", tokens);
     }
 }

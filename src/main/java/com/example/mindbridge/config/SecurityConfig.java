@@ -1,6 +1,7 @@
 package com.example.mindbridge.config;
 
 import com.example.mindbridge.security.JwtAuthenticationFilter;
+import com.example.mindbridge.security.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +30,11 @@ public class SecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+        return new JwtAuthenticationFilter(jwtTokenProvider);
     }
 
     @Bean

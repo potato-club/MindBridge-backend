@@ -35,7 +35,7 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String createAcessToken(Long id) {
+    public String createAccessToken(Long id) {
         return createToken(id, accessTokenValidity);
     }
 
