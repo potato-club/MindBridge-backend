@@ -1,4 +1,4 @@
-package com.example.mindbridge.dto;
+package com.mindbridge.dto;
 
 import lombok.*;
 

@@ -1,9 +1,9 @@
-package com.example.mindbridge.controller;
+package com.mindbridge.controller;
 
-import com.example.mindbridge.dto.ApiResponseDTO;
-import com.example.mindbridge.dto.SignupRequestDTO;
-import com.example.mindbridge.entity.UserEntity;
-import com.example.mindbridge.service.AuthService;
+import com.mindbridge.dto.ApiResponseDTO;
+import com.mindbridge.dto.SignupRequestDTO;
+import com.mindbridge.entity.UserEntity;
+import com.mindbridge.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,8 +1,8 @@
-package com.example.mindbridge.service;
+package com.mindbridge.service;
 
-import com.example.mindbridge.dto.SignupRequestDTO;
-import com.example.mindbridge.entity.UserEntity;
-import com.example.mindbridge.repository.UserRepository;
+import com.mindbridge.dto.SignupRequestDTO;
+import com.mindbridge.entity.UserEntity;
+import com.mindbridge.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
