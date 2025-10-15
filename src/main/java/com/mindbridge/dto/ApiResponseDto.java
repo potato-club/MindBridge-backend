@@ -1,4 +1,4 @@
-package com.example.mindbridge.dto;
+package com.mindbridge.dto;
 
 import lombok.*;
 
@@ -6,20 +6,20 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApiResponseDTO<T> {
+public class ApiResponseDto<T> {
     private boolean success;
     private int status;
     private String message;
     private T data;
 
-    public ApiResponseDTO(boolean success, String message, T data) {
+    public ApiResponseDto(boolean success, String message, T data) {
         this.success = success;
         this.message = message;
         this.data = data;
     }
 
-    public static <T> ApiResponseDTO<T> success(String message, T data) {
-        return ApiResponseDTO.<T>builder()
+    public static <T> ApiResponseDto<T> success(String message, T data) {
+        return ApiResponseDto.<T>builder()
                 .success(true)
                 .status(200)
                 .message(message)
@@ -27,8 +27,8 @@ public class ApiResponseDTO<T> {
                 .build();
     }
 
-    public static <T> ApiResponseDTO<T> success(String message) {
-        return ApiResponseDTO.<T>builder()
+    public static <T> ApiResponseDto<T> success(String message) {
+        return ApiResponseDto.<T>builder()
                 .success(true)
                 .status(200)
                 .message(message)
@@ -36,8 +36,8 @@ public class ApiResponseDTO<T> {
                 .build();
     }
 
-    public static <T> ApiResponseDTO<T> error(int status, String message) {
-        return ApiResponseDTO.<T>builder()
+    public static <T> ApiResponseDto<T> error(int status, String message) {
+        return ApiResponseDto.<T>builder()
                 .success(false)
                 .status(status)
                 .message(message)
@@ -45,8 +45,8 @@ public class ApiResponseDTO<T> {
                 .build();
     }
 
-    public static <T> ApiResponseDTO<T> error(String message) {
-        return ApiResponseDTO.<T>builder()
+    public static <T> ApiResponseDto<T> error(String message) {
+        return ApiResponseDto.<T>builder()
                 .success(false)
                 .status(400)
                 .message(message)

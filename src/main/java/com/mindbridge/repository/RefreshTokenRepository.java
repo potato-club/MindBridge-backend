@@ -1,6 +1,6 @@
-package com.example.mindbridge.repository;
+package com.mindbridge.repository;
 
-import com.example.mindbridge.entity.RefreshTokenEntity;
+import com.mindbridge.entity.RefreshTokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

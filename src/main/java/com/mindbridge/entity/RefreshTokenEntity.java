@@ -1,4 +1,4 @@
-package com.example.mindbridge.entity;
+package com.mindbridge.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,12 +1,12 @@
-package com.example.mindbridge.service;
+package com.mindbridge.service;
 
-import com.example.mindbridge.dto.ApiResponseDTO;
-import com.example.mindbridge.dto.LoginRequestDTO;
-import com.example.mindbridge.dto.SignupRequestDTO;
-import com.example.mindbridge.entity.UserEntity;
-import com.example.mindbridge.repository.UserRepository;
-import com.example.mindbridge.security.JwtTokenProvider;
-import com.example.mindbridge.security.TokenService;
+import com.mindbridge.dto.ApiResponseDto;
+import com.mindbridge.dto.LoginRequestDto;
+import com.mindbridge.dto.SignupRequestDto;
+import com.mindbridge.entity.UserEntity;
+import com.mindbridge.repository.UserRepository;
+import com.mindbridge.security.JwtTokenProvider;
+import com.mindbridge.security.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +28,7 @@ public class AuthService{
         this.tokenService = tokenService;
     }
 
-    public UserEntity signup(SignupRequestDTO req) {
+    public UserEntity signup(SignupRequestDto req) {
         // 아이디 중복 확인
         if (userRepository.existsByLoginId(req.getLoginId())) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");
@@ -65,12 +65,12 @@ public class AuthService{
 
         return userRepository.save(user);
     }
-    public ApiResponseDTO<Map<String, String>> login(LoginRequestDTO req) {
+    public ApiResponseDto<Map<String, String>> login(LoginRequestDto req) {
         UserEntity user = userRepository.findByLoginId(req.getLoginId())
                 .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            return ApiResponseDTO.error("비밀번호가 일치하지 않습니다.");
+            return ApiResponseDto.error("비밀번호가 일치하지 않습니다.");
         }
 
         long validityInMilliseconds = 3600000;
@@ -78,6 +78,6 @@ public class AuthService{
 
         Map<String, String> tokens = tokenService.generateToken(user.getId());
 
-        return new ApiResponseDTO<>(true, "로그인에 성공하였습니다.", tokens);
+        return new ApiResponseDto<>(true, "로그인에 성공하였습니다.", tokens);
     }
 }

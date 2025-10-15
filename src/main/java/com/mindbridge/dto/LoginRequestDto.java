@@ -1,4 +1,4 @@
-package com.example.mindbridge.dto;
+package com.mindbridge.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginRequestDTO {
+public class LoginRequestDto {
     @NotBlank
     private String loginId;
 

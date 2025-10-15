@@ -1,16 +1,13 @@
-package com.example.mindbridge.dto;
+package com.mindbridge.dto;
 
-import com.example.mindbridge.entity.enums.Gender;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.mindbridge.entity.enums.Gender;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
-public class SignupRequestDTO {
+public class SignupRequestDto {
     @NotBlank
     @Size(min = 2, max = 20)
     private String loginId;
@@ -32,7 +29,7 @@ public class SignupRequestDTO {
     @NotBlank
     private String phoneNumber;
 
-    @NotBlank
+    @NotNull
     private Gender gender;
 
     @Min(1925)

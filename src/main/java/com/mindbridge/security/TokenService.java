@@ -1,8 +1,8 @@
-package com.example.mindbridge.security;
+package com.mindbridge.security;
 
-import com.example.mindbridge.entity.RefreshTokenEntity;
-import com.example.mindbridge.repository.RefreshTokenRepository;
-import com.example.mindbridge.repository.UserRepository;
+import com.mindbridge.entity.RefreshTokenEntity;
+import com.mindbridge.repository.RefreshTokenRepository;
+import com.mindbridge.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
