@@ -1,9 +1,10 @@
 package com.mindbridge.dto.RequestDto;
 
+import com.mindbridge.entity.UserEntity;
 import com.mindbridge.entity.enums.Category;
 
 public record PostCreateRequestDto(
-        Long userId,
+        UserEntity userId,
         Category category,
         String title,
         String content,

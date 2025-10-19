@@ -19,7 +19,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "profileImage_id")
+    @Column(name = "profile_image_id", nullable = true)
     private Long profileImageId;
 
     @Column(name = "username", nullable = false, length = 50)
@@ -28,7 +28,7 @@ public class UserEntity {
     @Column(name = "nickname", nullable = false, length = 50)
     private String nickname;
 
-    @Column(name = "loginId", nullable = false, length = 50)
+    @Column(name = "login_id", nullable = false, length = 50)
     private String loginId;
 
     @Column(name = "password", nullable = false, length = 255)

@@ -2,10 +2,7 @@ package com.mindbridge.entity;
 
 import com.mindbridge.entity.enums.Category;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -22,8 +19,9 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Long userId;
+    private UserEntity user;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -31,8 +29,8 @@ public class PostEntity {
     @Column(name = "title", nullable = false, length = 50)
     private String title;
 
-    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "contents", nullable = false, columnDefinition = "TEXT")
+    private String contents;
 
     @Column(name = "is_anonymous")
     private Boolean isAnonymous;
@@ -40,9 +38,11 @@ public class PostEntity {
     @Column(name = "view_count")
     private int viewCount;
 
+    @Setter
     @Column(name = "like_count")
     private int likeCount;
 
+    @Setter
     @Column(name = "comment_count")
     private int commentCount;
 
@@ -52,9 +52,9 @@ public class PostEntity {
     @CreationTimestamp
     private LocalDateTime updatedAt;
 
-    public void update(String title, String content) {
+    public void update(String title, String contents) {
         this.title = title;
-        this.content = content;
+        this.contents = contents;
     }
 
     public void increaseViewCount() {
@@ -70,4 +70,5 @@ public class PostEntity {
             this.likeCount--;
         }
     }
+
 }

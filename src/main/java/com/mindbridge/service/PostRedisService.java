@@ -13,6 +13,7 @@ public class PostRedisService {
 
     private static final String POST_LIKES_KEY = "likes:post:";   // 게시글별 좋아요
     private static final String USER_LIKES_KEY = "likes:user:";   // 유저별 좋아요
+    private static final String POST_COMMENT_COUNT_KEY = "comments:posts";
 
     // 좋아요 추가
     public boolean addLike(String postId, String userId) {
@@ -42,5 +43,21 @@ public class PostRedisService {
     // 유저가 좋아요한 게시글 ID 목록 조회
     public Set<String> getLikedPostsByUserId(String userId) {
         return redisTemplate.opsForSet().members(USER_LIKES_KEY + userId);
+    }
+
+    //댓글 수 증가
+    public void incrementCommentCount(String postId) {
+        redisTemplate.opsForValue().increment(POST_COMMENT_COUNT_KEY + postId);
+    }
+
+    //댓글 수 감소
+    public void decrementCommentCount(String postId) {
+        redisTemplate.opsForValue().decrement(POST_COMMENT_COUNT_KEY + postId);
+    }
+
+    //댓글 수 조회
+    public int getCommentCount(String postId) {
+        String countStr = redisTemplate.opsForValue().get(POST_COMMENT_COUNT_KEY + postId);
+        return countStr != null ? Integer.parseInt(countStr) : 0;
     }
 }

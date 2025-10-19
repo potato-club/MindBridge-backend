@@ -1,20 +1,24 @@
 package com.mindbridge.service;
 
 import com.mindbridge.dto.RequestDto.PostCreateRequestDto;
-import com.mindbridge.dto.ResponseDto.PostCommentResponseDto;
+import com.mindbridge.dto.ResponseDto.PostListResponseDto;
 import com.mindbridge.dto.ResponseDto.PostResponseDto;
 import com.mindbridge.dto.RequestDto.PostUpdateRequestDto;
+import com.mindbridge.dto.ResponseDto.PostSliceResponseDto;
 import com.mindbridge.entity.PostEntity;
+import com.mindbridge.entity.enums.Category;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.PostNotFoundException;
-import com.mindbridge.mapper.PostCommentMapper;
 import com.mindbridge.mapper.PostMapper;
-import com.mindbridge.repository.PostCommentRepository;
 import com.mindbridge.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -22,23 +26,25 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
-    private final PostCommentRepository postCommentRepository;
+    private final PostMapper postMapper;
     private final PostRedisService redisService;
-    private final PostCommentMapper postCommentMapper;
 
     @Override
     @Transactional
     public PostResponseDto createPost(PostCreateRequestDto requestDTO) {
-        PostEntity post = PostMapper.toEntity(requestDTO);
+        PostEntity post = postMapper.toEntity(requestDTO);
         PostEntity saved  = postRepository.save(post);
-        return PostMapper.toDTO(saved);
+        return postMapper.toDTO(saved);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<PostResponseDto> getAllPosts() {
-        List<PostEntity> allPosts = postRepository.findAll();
-        return PostMapper.toDTOList(allPosts);
+    public PostSliceResponseDto<PostListResponseDto> getAllPosts(Category category, int page, int size) {
+
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        Slice<PostListResponseDto> posts = postRepository.findByCategory(category, pageRequest);
+
+        return new PostSliceResponseDto<>(posts.getContent(), posts.hasNext());
     }
 
     @Override
@@ -46,11 +52,25 @@ public class PostServiceImpl implements PostService {
     public PostResponseDto getPost(Long postId) {
         PostEntity postEntity = postRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(ErrorCode.POST_NOT_FOUND));
-        List<PostCommentResponseDto> comments = postCommentRepository.findByPostId(postId).stream()
-                .map(postCommentMapper::toDto)
-                .toList();
 
-        return PostMapper.toDTO(postEntity, comments);
+        postEntity.increaseViewCount();
+
+        int redisLikeCount = redisService.getLikeCount(String.valueOf(postId));
+        int redisCommentCount = redisService.getCommentCount(String.valueOf(postId));
+
+        postEntity.setLikeCount(postEntity.getLikeCount() + redisLikeCount);
+        postEntity.setCommentCount(postEntity.getCommentCount() + redisCommentCount);
+        return postMapper.toDTO(postEntity);
+    }
+
+    @Override
+    @Transactional
+    public PostSliceResponseDto<PostListResponseDto> searchPosts(Category category, String keyword, int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+
+        Slice<PostListResponseDto> posts = postRepository.searchPostsByKeyword( category, keyword, pageRequest);
+
+        return new PostSliceResponseDto<>(posts.getContent(), posts.hasNext());
     }
 
     @Override
@@ -63,7 +83,7 @@ public class PostServiceImpl implements PostService {
                 postUpdateRequestDTO.title(),
                 postUpdateRequestDTO.content()
         );
-        return PostMapper.toDTO(postEntity);
+        return postMapper.toDTO(postEntity);
     }
 
     @Override
@@ -105,7 +125,18 @@ public class PostServiceImpl implements PostService {
         List<PostEntity> likedPosts = postRepository.findAllById(postIds);
 
         return likedPosts.stream()
-                .map(PostMapper::toDTO)
+                .map(postMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public List<PostResponseDto> getWeeklyTopPosts() {
+        LocalDateTime oneWeekAge = LocalDateTime.now().minusDays(7);
+
+        List<PostEntity> topPosts =
+                postRepository.findTop3ByCreatedAtAfterOrderByViewCountDesc(oneWeekAge);
+
+        return postMapper.toDTOList(topPosts);
     }
 }
