@@ -1,6 +1,6 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.SignupRequestDTO;
+import com.mindbridge.dto.SignupRequestDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +19,7 @@ public class AuthService{
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserEntity signup(SignupRequestDTO req) {
+    public UserEntity signup(SignupRequestDto req) {
         // 아이디 중복 확인
         if (userRepository.existsByLoginId(req.getLoginId())) {
             throw new RuntimeException("이미 존재하는 아이디입니다.");

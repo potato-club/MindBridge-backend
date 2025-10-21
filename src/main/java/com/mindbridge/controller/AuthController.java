@@ -1,7 +1,7 @@
 package com.mindbridge.controller;
 
-import com.mindbridge.dto.ApiResponseDTO;
-import com.mindbridge.dto.SignupRequestDTO;
+import com.mindbridge.dto.ApiResponseDto;
+import com.mindbridge.dto.SignupRequestDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.service.AuthService;
 import jakarta.validation.Valid;
@@ -22,10 +22,10 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponseDTO<UserEntity>> signup(@Valid @RequestBody SignupRequestDTO req) {
+    public ResponseEntity<ApiResponseDto<UserEntity>> signup(@Valid @RequestBody SignupRequestDto req) {
        UserEntity user = authService.signup(req);
         return ResponseEntity.ok(
-                new ApiResponseDTO<>(true, "회원가입이 성공적으로 완료되었습니다.", user)
+                new ApiResponseDto<>(true, "회원가입이 성공적으로 완료되었습니다.", user)
         );
     }
 }

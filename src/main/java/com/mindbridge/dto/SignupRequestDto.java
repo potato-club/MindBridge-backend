@@ -7,7 +7,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class SignupRequestDTO {
+public class SignupRequestDto {
     @NotBlank
     @Size(min = 2, max = 20)
     private String loginId;
