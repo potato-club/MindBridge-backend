@@ -1,4 +1,4 @@
-package com.example.mindbridge.util;
+package com.mindbridge.util;
 
 import org.springframework.stereotype.Service;
 

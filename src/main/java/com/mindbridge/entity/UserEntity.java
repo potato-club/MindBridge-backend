@@ -1,6 +1,6 @@
-package com.example.mindbridge.entity;
+package com.mindbridge.entity;
 
-import com.example.mindbridge.entity.enums.Gender;
+import com.mindbridge.entity.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
 

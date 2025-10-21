@@ -1,4 +1,4 @@
-package com.example.mindbridge.entity.enums;
+package com.mindbridge.entity.enums;
 
 public enum Gender {
     MALE, FEMALE, OTHER

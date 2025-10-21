@@ -1,11 +1,11 @@
-package com.example.mindbridge.service;
+package com.mindbridge.service;
 
-import com.example.mindbridge.dto.FindIdRequestDTO;
-import com.example.mindbridge.dto.FindPasswordRequestDTO;
-import com.example.mindbridge.dto.ResetPasswordRequestDTO;
-import com.example.mindbridge.entity.UserEntity;
-import com.example.mindbridge.repository.UserRepository;
-import com.example.mindbridge.util.SmsService;
+import com.mindbridge.dto.FindIdRequestDto;
+import com.mindbridge.dto.FindPasswordRequestDto;
+import com.mindbridge.dto.ResetPasswordRequestDto;
+import com.mindbridge.entity.UserEntity;
+import com.mindbridge.repository.UserRepository;
+import com.mindbridge.util.SmsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class FindAccountService {
     private final SmsService smsService;
     private final PasswordEncoder passwordEncoder;
 
-    public String findUserId(FindIdRequestDTO req) {
+    public String findUserId(FindIdRequestDto req) {
         UserEntity user = userRepository.findByUsernameAndPhoneNumber(req.getUsername(), req.getPhoneNumber())
                 .orElseThrow(() -> new RuntimeException("계정이 존재하지 않습니다."));
 
@@ -28,7 +28,7 @@ public class FindAccountService {
         return user.getUserid();
     }
 
-    public boolean verifyForPasswordReset(FindPasswordRequestDTO req) {
+    public boolean verifyForPasswordReset(FindPasswordRequestDto req) {
         userRepository.findByUseridAndPhoneNumber(req.getUserid(), req.getPhoneNumber())
                 .orElseThrow(() -> new RuntimeException("계정이 존재하지 않습니다."));
 
@@ -39,7 +39,7 @@ public class FindAccountService {
         return true;
     }
 
-    public void resetPassword(ResetPasswordRequestDTO req) {
+    public void resetPassword(ResetPasswordRequestDto req) {
         UserEntity user = userRepository.findByUserid(req.getUserid())
                 .orElseThrow(() -> new RuntimeException("계정을 찾을 수 없습니다."));
 

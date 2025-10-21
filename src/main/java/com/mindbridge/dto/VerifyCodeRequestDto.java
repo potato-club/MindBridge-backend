@@ -1,12 +1,11 @@
-package com.example.mindbridge.dto;
+package com.mindbridge.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class FindPasswordRequestDTO {
-    private String userid;
+public class VerifyCodeRequestDto {
     private String phoneNumber;
     private String code;
 }
