@@ -1,8 +1,8 @@
-package com.example.mindbridge.controller;
+package com.mindbridge.controller;
 
-import com.example.mindbridge.dto.ApiResponseDTO;
-import com.example.mindbridge.dto.LoginRequestDTO;
-import com.example.mindbridge.service.AuthService;
+import com.mindbridge.dto.ApiResponseDto;
+import com.mindbridge.dto.LoginRequestDto;
+import com.mindbridge.service.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +19,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ApiResponseDTO<String> login(@RequestBody LoginRequestDTO req) {
+    public ApiResponseDto<String> login(@RequestBody LoginRequestDto req) {
         return authService.login(req);
     }
 }

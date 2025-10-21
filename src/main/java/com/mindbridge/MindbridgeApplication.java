@@ -1,6 +1,5 @@
-package com.example.mindbridge;
+package com.mindbridge;
 
-import jakarta.persistence.Enumerated;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

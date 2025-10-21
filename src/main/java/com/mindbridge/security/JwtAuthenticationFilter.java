@@ -1,4 +1,4 @@
-package com.example.mindbridge.security;
+package com.mindbridge.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

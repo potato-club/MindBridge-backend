@@ -1,4 +1,4 @@
-package com.example.mindbridge.dto;
+package com.mindbridge.dto;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ApiResponseDTO<T> {
+public class ApiResponseDto<T> {
     private boolean success;
     private String message;
     private T data;

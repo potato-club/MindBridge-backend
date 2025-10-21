@@ -1,4 +1,4 @@
-package com.example.mindbridge.security;
+package com.mindbridge.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;

@@ -1,6 +1,6 @@
-package com.example.mindbridge.config;
+package com.mindbridge.config;
 
-import com.example.mindbridge.security.JwtAuthenticationFilter;
+import com.mindbridge.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
