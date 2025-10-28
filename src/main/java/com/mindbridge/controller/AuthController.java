@@ -2,31 +2,22 @@ package com.mindbridge.controller;
 
 import com.mindbridge.dto.ApiResponseDto;
 import com.mindbridge.dto.LoginRequestDto;
+import com.mindbridge.dto.ResponseDto.LoginResponseDto;
+import com.mindbridge.dto.ResponseDto.TokenResponseDto;
 import com.mindbridge.dto.SignupRequestDto;
 import com.mindbridge.entity.UserEntity;
-import com.mindbridge.security.JwtTokenProvider;
-import com.mindbridge.security.TokenService;
 import com.mindbridge.service.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/auth")
 public class AuthController {
-
     private final AuthService authService;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final TokenService tokenService;
-
-    public AuthController(AuthService authService, JwtTokenProvider jwtTokenProvider, TokenService tokenService) {
-        this.authService = authService;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.tokenService = tokenService;
-    }
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponseDto<UserEntity>> signup(@Valid @RequestBody SignupRequestDto req) {
@@ -36,27 +27,20 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponseDto<Map<String, String>>> login(@RequestBody LoginRequestDto req) {
-        try {
-            ApiResponseDto<Map<String, String>> response = authService.login(req);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponseDto.error("로그인 실패: " + e.getMessage()));
-        }
-    }
+//    @PostMapping("/login")
+//    public ResponseEntity<LoginResponseDto> login(
+//            @RequestBody LoginRequestDto req,
+//            HttpServletResponse httpServletResponse) {
+//        LoginResponseDto loginResponseDto = authService.login(req, httpServletResponse);
+//        return ResponseEntity.ok(loginResponseDto);
+//
+//    }
 
-    @PostMapping("/refresh")
-    public ResponseEntity<ApiResponseDto<String>> refreshToken(
-            @RequestParam Long userId,
-            @RequestParam String refreshToken) {
-        try {
-            String newAccessToken = tokenService.refreshAccessToken(userId, refreshToken);
-            return ResponseEntity.ok(ApiResponseDto.success("새로운 액세스 토큰 발급 성공", newAccessToken));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(ApiResponseDto.error("리프레쉬 토큰 만료 또는 유효하지 않음: " + e.getMessage()));
-        }
+    @PostMapping("/reissue")
+    public ResponseEntity<TokenResponseDto> reissue(
+            @CookieValue("refreshToken") String refreshToken) {
+        TokenResponseDto tokenResponseDto = authService.reissue(refreshToken);
+
+        return ResponseEntity.ok(tokenResponseDto);
     }
 }

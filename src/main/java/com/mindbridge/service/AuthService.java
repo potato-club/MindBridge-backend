@@ -1,32 +1,35 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.ApiResponseDto;
 import com.mindbridge.dto.LoginRequestDto;
+import com.mindbridge.dto.ResponseDto.LoginResponseDto;
+import com.mindbridge.dto.ResponseDto.TokenResponseDto;
 import com.mindbridge.dto.SignupRequestDto;
 import com.mindbridge.entity.UserEntity;
+import com.mindbridge.error.ErrorCode;
+import com.mindbridge.error.customExceptions.UnauthorizedException;
+import com.mindbridge.error.customExceptions.UserNotFoundException;
+import com.mindbridge.jwt.JwtUtil;
 import com.mindbridge.repository.UserRepository;
-import com.mindbridge.security.JwtTokenProvider;
-import com.mindbridge.security.TokenService;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
+@RequiredArgsConstructor
 @Service
 public class AuthService{
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final TokenService tokenService;
+    private final JwtUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider jwtTokenProvider, TokenService tokenService) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.tokenService = tokenService;
-    }
+    @Value("${jwt.token.refresh-expiration-time}")
+    private Long refreshExpMs;
 
     public UserEntity signup(SignupRequestDto req) {
         // 아이디 중복 확인
@@ -65,19 +68,50 @@ public class AuthService{
 
         return userRepository.save(user);
     }
-    public ApiResponseDto<Map<String, String>> login(LoginRequestDto req) {
-        UserEntity user = userRepository.findByLoginId(req.getLoginId())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 아이디입니다."));
 
-        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            return ApiResponseDto.error("비밀번호가 일치하지 않습니다.");
+//    public LoginResponseDto login(LoginRequestDto req, HttpServletResponse httpServletResponse) {
+//        String loginId = req.loginId();
+//        String password = req.password();
+//
+//        UserEntity userEntity = userRepository.findByLoginId(loginId)
+//                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+//
+//        if (!passwordEncoder.matches(password, userEntity.getPassword())) {
+//            throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
+//        }
+//
+//        Long userId = userEntity.getId();
+//        String username = userEntity.getUsername();
+//        String nickname = userEntity.getNickname();
+//
+//        String accessToken = jwtUtil.createAccessToken(userId, username, nickname);
+//        String refreshToken = jwtUtil.createRefreshToken(userId);
+//
+//        httpServletResponse.setHeader("Authorization", "Bearer " + accessToken);
+//
+//        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+//                .httpOnly(true)
+//                .secure(false)
+//                .path("/")
+//                .maxAge(refreshExpMs)
+//                .sameSite("None")
+//                .build();
+//        httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+//
+//        return new LoginResponseDto(accessToken);
+//
+//    }
+
+    public TokenResponseDto reissue(String refreshToken) {
+        if (!jwtUtil.validateToken(refreshToken)) {
+            throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        long validityInMilliseconds = 3600000;
-        String token = jwtTokenProvider.createToken(user.getId(), validityInMilliseconds);
+        Long userId = jwtUtil.getUserId(refreshToken);
+        String username = jwtUtil.getUsername(refreshToken);
+        String nickname = jwtUtil.getNickname(refreshToken);
 
-        Map<String, String> tokens = tokenService.generateToken(user.getId());
-
-        return new ApiResponseDto<>(true, "로그인에 성공하였습니다.", tokens);
+        String newAccessToken = jwtUtil.createAccessToken(userId, username, nickname);
+        return new TokenResponseDto(newAccessToken);
     }
 }
