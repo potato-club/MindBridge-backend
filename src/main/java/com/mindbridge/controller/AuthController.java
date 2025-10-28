@@ -1,13 +1,10 @@
 package com.mindbridge.controller;
 
-import com.mindbridge.dto.ApiResponseDto;
-import com.mindbridge.dto.LoginRequestDto;
-import com.mindbridge.dto.ResponseDto.LoginResponseDto;
+import com.mindbridge.dto.ResponseDto.ApiResponseDto;
 import com.mindbridge.dto.ResponseDto.TokenResponseDto;
-import com.mindbridge.dto.SignupRequestDto;
+import com.mindbridge.dto.RequestDto.SignupRequestDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.service.AuthService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

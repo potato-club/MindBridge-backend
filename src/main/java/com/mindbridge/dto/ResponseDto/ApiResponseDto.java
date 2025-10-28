@@ -1,4 +1,4 @@
-package com.mindbridge.dto;
+package com.mindbridge.dto.ResponseDto;
 
 import lombok.*;
 

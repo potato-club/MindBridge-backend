@@ -1,20 +1,14 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.LoginRequestDto;
-import com.mindbridge.dto.ResponseDto.LoginResponseDto;
 import com.mindbridge.dto.ResponseDto.TokenResponseDto;
-import com.mindbridge.dto.SignupRequestDto;
+import com.mindbridge.dto.RequestDto.SignupRequestDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.UnauthorizedException;
-import com.mindbridge.error.customExceptions.UserNotFoundException;
 import com.mindbridge.jwt.JwtUtil;
 import com.mindbridge.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

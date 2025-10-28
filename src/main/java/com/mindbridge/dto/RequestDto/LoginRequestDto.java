@@ -1,4 +1,4 @@
-package com.mindbridge.dto;
+package com.mindbridge.dto.RequestDto;
 
 public record LoginRequestDto(
         String loginId,

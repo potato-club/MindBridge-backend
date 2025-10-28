@@ -1,4 +1,4 @@
-package com.mindbridge.dto;
+package com.mindbridge.dto.RequestDto;
 
 import com.mindbridge.entity.enums.Gender;
 import jakarta.validation.constraints.*;
