@@ -32,8 +32,6 @@ public class SignupRequestDto {
     @NotNull
     private Gender gender;
 
-    @Min(1925)
-    @Max(2025)
     private LocalDate birthDate;
 
 }

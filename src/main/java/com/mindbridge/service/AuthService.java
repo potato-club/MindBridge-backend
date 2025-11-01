@@ -1,14 +1,21 @@
 package com.mindbridge.service;
 
+import com.mindbridge.dto.RequestDto.LoginRequestDto;
+import com.mindbridge.dto.ResponseDto.LoginResponseDto;
 import com.mindbridge.dto.ResponseDto.TokenResponseDto;
 import com.mindbridge.dto.RequestDto.SignupRequestDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.UnauthorizedException;
+import com.mindbridge.error.customExceptions.UserNotFoundException;
 import com.mindbridge.jwt.JwtUtil;
 import com.mindbridge.repository.UserRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -63,38 +70,40 @@ public class AuthService{
         return userRepository.save(user);
     }
 
-//    public LoginResponseDto login(LoginRequestDto req, HttpServletResponse httpServletResponse) {
-//        String loginId = req.loginId();
-//        String password = req.password();
-//
-//        UserEntity userEntity = userRepository.findByLoginId(loginId)
-//                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
-//
-//        if (!passwordEncoder.matches(password, userEntity.getPassword())) {
-//            throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
-//        }
-//
-//        Long userId = userEntity.getId();
-//        String username = userEntity.getUsername();
-//        String nickname = userEntity.getNickname();
-//
-//        String accessToken = jwtUtil.createAccessToken(userId, username, nickname);
-//        String refreshToken = jwtUtil.createRefreshToken(userId);
-//
-//        httpServletResponse.setHeader("Authorization", "Bearer " + accessToken);
-//
-//        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
-//                .httpOnly(true)
-//                .secure(false)
-//                .path("/")
-//                .maxAge(refreshExpMs)
-//                .sameSite("None")
-//                .build();
-//        httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-//
-//        return new LoginResponseDto(accessToken);
-//
-//    }
+    public LoginResponseDto login(LoginRequestDto req, HttpServletResponse httpServletResponse) {
+        String loginId = req.loginId();
+        String password = req.password();
+
+        UserEntity user = userRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        Long userId = user.getId();
+        String username = user.getUsername();
+        String nickname = user.getNickname();
+
+        String accessToken = jwtUtil.createAccessToken(userId, username, nickname);
+        String refreshToken = jwtUtil.createRefreshToken(userId);
+
+        user.setRefreshToken(refreshToken);
+        userRepository.save(user);
+
+        httpServletResponse.setHeader("Authorization", "Bearer " + accessToken);
+
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(refreshExpMs)
+                .sameSite("None")
+                .build();
+        httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
+
+        return new LoginResponseDto(accessToken);
+    }
 
     public TokenResponseDto reissue(String refreshToken) {
         if (!jwtUtil.validateToken(refreshToken)) {
@@ -102,10 +111,25 @@ public class AuthService{
         }
 
         Long userId = jwtUtil.getUserId(refreshToken);
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+
         String username = jwtUtil.getUsername(refreshToken);
         String nickname = jwtUtil.getNickname(refreshToken);
+
+        if(!refreshToken.equals(user.getRefreshToken())) {
+            throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
 
         String newAccessToken = jwtUtil.createAccessToken(userId, username, nickname);
         return new TokenResponseDto(newAccessToken);
     }
+
+//    public void logout(String loginId) {
+//        UserEntity user = userRepository.findByLoginId(loginId)
+//                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+//
+//        user.setRefreshToken(null);
+//        userRepository.save(user);
+//    }
 }

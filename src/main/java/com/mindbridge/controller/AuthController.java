@@ -1,10 +1,13 @@
 package com.mindbridge.controller;
 
+import com.mindbridge.dto.RequestDto.LoginRequestDto;
 import com.mindbridge.dto.ResponseDto.ApiResponseDto;
+import com.mindbridge.dto.ResponseDto.LoginResponseDto;
 import com.mindbridge.dto.ResponseDto.TokenResponseDto;
 import com.mindbridge.dto.RequestDto.SignupRequestDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.service.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +27,13 @@ public class AuthController {
         );
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<LoginResponseDto> login(
-//            @RequestBody LoginRequestDto req,
-//            HttpServletResponse httpServletResponse) {
-//        LoginResponseDto loginResponseDto = authService.login(req, httpServletResponse);
-//        return ResponseEntity.ok(loginResponseDto);
-//
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDto> login(
+            @RequestBody LoginRequestDto req,
+            HttpServletResponse httpServletResponse) {
+        LoginResponseDto loginResponseDto = authService.login(req, httpServletResponse);
+        return ResponseEntity.ok(loginResponseDto);
+    }
 
     @PostMapping("/reissue")
     public ResponseEntity<TokenResponseDto> reissue(
@@ -40,4 +42,9 @@ public class AuthController {
 
         return ResponseEntity.ok(tokenResponseDto);
     }
+
+//    @PostMapping("/logout/{loginId}")
+//    public ResponseEntity<ApiResponseDto> logout(
+//            @PathVariable String loginId
+//    )
 }

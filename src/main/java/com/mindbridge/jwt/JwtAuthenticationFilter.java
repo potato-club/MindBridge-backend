@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 특정 경로를 필터에서 제외
         if (path.equals("/login")
-                || path.equals("/signup")
+                || path.equals("/api/auth/signup")
                 || path.equals("/api/auth/login")
                 || path.equals("/api/auth/reissue")
                 || pathMatcher.match("/swagger-ui/**", path)
