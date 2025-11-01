@@ -51,7 +51,4 @@ public class UserEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @Column(name = "refresh_token", length = 512)
-    private String refreshToken;
 }

@@ -88,9 +88,6 @@ public class AuthService{
         String accessToken = jwtUtil.createAccessToken(userId, username, nickname);
         String refreshToken = jwtUtil.createRefreshToken(userId);
 
-        user.setRefreshToken(refreshToken);
-        userRepository.save(user);
-
         httpServletResponse.setHeader("Authorization", "Bearer " + accessToken);
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
@@ -111,15 +108,8 @@ public class AuthService{
         }
 
         Long userId = jwtUtil.getUserId(refreshToken);
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
-
         String username = jwtUtil.getUsername(refreshToken);
         String nickname = jwtUtil.getNickname(refreshToken);
-
-        if(!refreshToken.equals(user.getRefreshToken())) {
-            throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
-        }
 
         String newAccessToken = jwtUtil.createAccessToken(userId, username, nickname);
         return new TokenResponseDto(newAccessToken);
