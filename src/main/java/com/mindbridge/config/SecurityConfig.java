@@ -35,7 +35,9 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/api/auth/signup",
             "/api/auth/login",
-            "/api/auth/reissue"
+            "/api/auth/reissue",
+            "/api/auth/check-id",
+            "/api/auth/check-nickname"
     };
 
     @Bean
