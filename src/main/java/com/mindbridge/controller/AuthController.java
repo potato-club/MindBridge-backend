@@ -5,6 +5,7 @@ import com.mindbridge.dto.ResponseDto.ApiResponseDto;
 import com.mindbridge.dto.ResponseDto.LoginResponseDto;
 import com.mindbridge.dto.ResponseDto.TokenResponseDto;
 import com.mindbridge.dto.RequestDto.SignupRequestDto;
+import com.mindbridge.dto.ResponseDto.UserResponseDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,11 +21,24 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponseDto<UserEntity>> signup(@Valid @RequestBody SignupRequestDto req) {
+    public ResponseEntity<ApiResponseDto<UserResponseDto>> signup(@Valid @RequestBody SignupRequestDto req) {
         UserEntity user = authService.signup(req);
+        UserResponseDto dto = new UserResponseDto(user);
         return ResponseEntity.ok(
-                new ApiResponseDto<>(true, "회원가입이 성공적으로 완료되었습니다.", user)
+                new ApiResponseDto<>(true, "회원가입이 성공적으로 완료되었습니다.", dto)
         );
+    }
+
+    @GetMapping("/check-id")
+    public ResponseEntity<Boolean> checkDuplicateId(@RequestParam String loginId) {
+        boolean isDuplicate = authService.isDuplicateLoginId(loginId);
+        return ResponseEntity.ok(isDuplicate);
+    }
+
+    @GetMapping("/check-nickname")
+    public ResponseEntity<Boolean> checkDuplicateNickname(@RequestParam String nickname) {
+        boolean isDuplicate = authService.isDuplicateNickname(nickname);
+        return ResponseEntity.ok(isDuplicate);
     }
 
     @PostMapping("/login")
