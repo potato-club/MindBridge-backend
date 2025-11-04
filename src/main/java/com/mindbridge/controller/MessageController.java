@@ -3,10 +3,7 @@ package com.mindbridge.controller;
 import com.mindbridge.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +13,7 @@ public class MessageController {
 
     @PostMapping("/send")
     public ResponseEntity<String> sendAuthCode(
-            @RequestParam String phone
+            @RequestBody String phone
     ){
         messageService.sendAuthCode(phone);
 
@@ -25,8 +22,8 @@ public class MessageController {
 
     @PostMapping("/verify")
     public ResponseEntity<String> verifyCode(
-            @RequestParam String phone,
-            @RequestParam String code
+            @RequestBody String phone,
+            @RequestBody String code
     ) {
         boolean result = messageService.verifyAuthCode(phone, code);
 
