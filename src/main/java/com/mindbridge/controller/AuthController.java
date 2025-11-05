@@ -30,13 +30,13 @@ public class AuthController {
     }
 
     @GetMapping("/check-id")
-    public ResponseEntity<Boolean> checkDuplicateId(@RequestBody String loginId) {
+    public ResponseEntity<Boolean> checkDuplicateId(@RequestParam String loginId) {
         boolean isDuplicate = authService.isDuplicateLoginId(loginId);
         return ResponseEntity.ok(isDuplicate);
     }
 
     @GetMapping("/check-nickname")
-    public ResponseEntity<Boolean> checkDuplicateNickname(@RequestBody String nickname) {
+    public ResponseEntity<Boolean> checkDuplicateNickname(@RequestParam String nickname) {
         boolean isDuplicate = authService.isDuplicateNickname(nickname);
         return ResponseEntity.ok(isDuplicate);
     }
