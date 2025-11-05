@@ -29,7 +29,7 @@ public class SecurityConfig {
     }
 
     public static final String[] ALLOW_URLS = {
-            "/",
+            "/main",
             "/v3/api-docs/**",
             "/swagger-ui.html",
             "/swagger-ui/**",
