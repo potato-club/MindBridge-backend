@@ -38,7 +38,6 @@ public class SecurityConfig {
             "/api/auth/reissue",
             "/api/auth/check-id",
             "/api/auth/check-nickname",
-            "/api/auth/reissue",
             "/api/sms/send",
             "/api/sms/verify"
     };

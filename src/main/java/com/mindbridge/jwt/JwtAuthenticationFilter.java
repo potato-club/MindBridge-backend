@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private  SecretKey secretKey;
+    private final SecretKey secretKey;
 
     public JwtAuthenticationFilter(@Value("${jwt.secret}") String signingKey) {
         this.secretKey = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
@@ -73,14 +73,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = (String) claims.get("username");
         String nickname = (String) claims.get("nickname");
 
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));//임시로 role설정
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));//임시로 role 설정
 
         CustomUserDetails userDetails = new CustomUserDetails(
                 userId, username, nickname, authorities);
 
         UsernamePasswordAuthentication authentication = new UsernamePasswordAuthentication(userDetails, null, authorities);
 
-        // SecurityContext에 Authentication 객체 추가
+        // SecurityContext 에 Authentication 객체 추가
         SecurityContextHolder.getContext()
                 .setAuthentication(authentication);
         filterChain.doFilter(request, response);    // 필터 체인의 다음 필터 호룿
