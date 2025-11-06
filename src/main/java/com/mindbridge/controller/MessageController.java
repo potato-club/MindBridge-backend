@@ -1,5 +1,6 @@
 package com.mindbridge.controller;
 
+import com.mindbridge.dto.RequestDto.VerificationRequestDto;
 import com.mindbridge.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,9 @@ public class MessageController {
 
     @PostMapping("/verify")
     public ResponseEntity<String> verifyCode(
-            @RequestBody String phone,
-            @RequestBody String code
-    ) {
-        boolean result = messageService.verifyAuthCode(phone, code);
+            @RequestBody VerificationRequestDto verifyRequest
+            ) {
+        boolean result = messageService.verifyAuthCode(verifyRequest.phone(), verifyRequest.code());
 
         return ResponseEntity.ok(result ? "인증 성공" : "인증 실패");
     }
