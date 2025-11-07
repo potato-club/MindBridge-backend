@@ -29,7 +29,7 @@ public class MessageController {
     public ResponseEntity<String> verifyCode(
             @RequestBody VerificationRequestDto verifyRequest
             ) {
-        boolean result = messageService.verifyAuthCode(verifyRequest.phone(), verifyRequest.code());
+        boolean result = messageService.verifyAuthCode(verifyRequest.phoneNumber(), verifyRequest.code());
 
         return ResponseEntity.ok(result ? "인증 성공" : "인증 실패");
     }
