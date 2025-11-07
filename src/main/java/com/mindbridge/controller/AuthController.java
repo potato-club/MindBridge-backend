@@ -1,5 +1,7 @@
 package com.mindbridge.controller;
 
+import com.mindbridge.dto.RequestDto.CheckLoginIdRequestDto;
+import com.mindbridge.dto.RequestDto.CheckNicknameRequestDto;
 import com.mindbridge.dto.RequestDto.LoginRequestDto;
 import com.mindbridge.dto.ResponseDto.ApiResponseDto;
 import com.mindbridge.dto.ResponseDto.LoginResponseDto;
@@ -7,6 +9,8 @@ import com.mindbridge.dto.ResponseDto.TokenResponseDto;
 import com.mindbridge.dto.RequestDto.SignupRequestDto;
 import com.mindbridge.dto.ResponseDto.UserResponseDto;
 import com.mindbridge.entity.UserEntity;
+import com.mindbridge.error.ErrorCode;
+import com.mindbridge.error.customExceptions.CustomException;
 import com.mindbridge.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -29,16 +33,24 @@ public class AuthController {
         );
     }
 
-    @GetMapping("/check-id")
-    public ResponseEntity<Boolean> checkDuplicateId(@RequestParam String loginId) {
-        boolean isDuplicate = authService.isDuplicateLoginId(loginId);
-        return ResponseEntity.ok(isDuplicate);
+    @PostMapping("/check-id")
+    public ResponseEntity<ApiResponseDto<String>> checkDuplicateLoginId(@RequestBody CheckLoginIdRequestDto requestDto) {
+        boolean isDuplicate = authService.isDuplicateLoginId(requestDto.getLoginId());
+
+        if (isDuplicate) {
+            throw new CustomException(ErrorCode.DUPLICATE_LOGIN_ID);
+        }
+        return ResponseEntity.ok(new ApiResponseDto<>(true, "사용 가능한 아이디입니다.", null));
     }
 
-    @GetMapping("/check-nickname")
-    public ResponseEntity<Boolean> checkDuplicateNickname(@RequestParam String nickname) {
-        boolean isDuplicate = authService.isDuplicateNickname(nickname);
-        return ResponseEntity.ok(isDuplicate);
+    @PostMapping("/check-nickname")
+    public ResponseEntity<ApiResponseDto<String>> checkDuplicateNickname(@Valid @RequestBody CheckNicknameRequestDto requestDto) {
+        boolean isDuplicate = authService.isDuplicateNickname(requestDto.getNickname());
+
+        if (isDuplicate) {
+            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
+        }
+        return ResponseEntity.ok(new ApiResponseDto<>(true, "사용 가능한 닉네임입니다.", null));
     }
 
     @PostMapping("/login")
