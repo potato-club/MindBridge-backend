@@ -37,7 +37,9 @@ public class SecurityConfig {
             "/api/auth/login",
             "/api/auth/reissue",
             "/api/auth/check-id",
-            "/api/auth/check-nickname"
+            "/api/auth/check-nickname",
+            "/api/sms/send",
+            "/api/sms/verify"
     };
 
     @Bean
