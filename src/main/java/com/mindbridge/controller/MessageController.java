@@ -1,5 +1,6 @@
 package com.mindbridge.controller;
 
+import com.mindbridge.dto.RequestDto.SmsSendRequestDto;
 import com.mindbridge.dto.RequestDto.VerificationRequestDto;
 import com.mindbridge.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,9 +17,9 @@ public class MessageController {
     @Operation(summary = "문자 전송 by 조민기")
     @PostMapping("/send")
     public ResponseEntity<String> sendAuthCode(
-            @RequestBody String phone
-    ){
-        messageService.sendAuthCode(phone);
+            @RequestBody SmsSendRequestDto smsSendRequestDto
+            ){
+        messageService.sendAuthCode(smsSendRequestDto.phoneNumber());
 
         return ResponseEntity.ok("인증번호가 전송되었습니다.");
     }
