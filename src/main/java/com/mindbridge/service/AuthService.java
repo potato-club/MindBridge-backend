@@ -1,11 +1,9 @@
 package com.mindbridge.service;
 
 import com.mindbridge.dto.RequestDto.LoginRequestDto;
-import com.mindbridge.dto.ResponseDto.ApiResponseDto;
 import com.mindbridge.dto.ResponseDto.LoginResponseDto;
 import com.mindbridge.dto.ResponseDto.TokenResponseDto;
 import com.mindbridge.dto.RequestDto.SignupRequestDto;
-import com.mindbridge.dto.ResponseDto.UserResponseDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.CustomException;
@@ -15,12 +13,12 @@ import com.mindbridge.jwt.JwtUtil;
 import com.mindbridge.repository.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -126,11 +124,15 @@ public class AuthService{
         return userRepository.existsByNickname(nickname);
     }
 
-//    public void logout(String loginId) {
-//        UserEntity user = userRepository.findByLoginId(loginId)
-//                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
-//
-//        user.setRefreshToken(null);
-//        userRepository.save(user);
-//    }
+    @Transactional
+    public void withdraw(Long userId, String password) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        userRepository.delete(user);
+    }
 }

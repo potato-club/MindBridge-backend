@@ -1,21 +1,20 @@
 package com.mindbridge.controller;
 
-import com.mindbridge.dto.RequestDto.CheckLoginIdRequestDto;
-import com.mindbridge.dto.RequestDto.CheckNicknameRequestDto;
-import com.mindbridge.dto.RequestDto.LoginRequestDto;
+import com.mindbridge.dto.RequestDto.*;
 import com.mindbridge.dto.ResponseDto.ApiResponseDto;
 import com.mindbridge.dto.ResponseDto.LoginResponseDto;
 import com.mindbridge.dto.ResponseDto.TokenResponseDto;
-import com.mindbridge.dto.RequestDto.SignupRequestDto;
 import com.mindbridge.dto.ResponseDto.UserResponseDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.CustomException;
+import com.mindbridge.jwt.CustomUserDetails;
 import com.mindbridge.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -71,8 +70,16 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<ApiResponseDto<String>> logout(
-            @RequestHeader("Authorization") String token
+            @RequestHeader(value = "Authorization", required = false) String token
     ) {
         return ResponseEntity.ok(ApiResponseDto.success("로그아웃이 완료되었습니다."));
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<ApiResponseDto<Void>> withdraw(@RequestBody WithdrawRequestDto request,
+                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        authService.withdraw(userDetails.getId(), request.getPassword());
+        return ResponseEntity.ok(ApiResponseDto.success("회원탈퇴가 완료되었습니다.", null));
     }
 }

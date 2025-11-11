@@ -51,4 +51,7 @@ public class UserEntity {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(nullable = false)
+    private boolean isDeleted = false;
 }
