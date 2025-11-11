@@ -69,8 +69,10 @@ public class AuthController {
         return ResponseEntity.ok(tokenResponseDto);
     }
 
-//    @PostMapping("/logout/{loginId}")
-//    public ResponseEntity<ApiResponseDto> logout(
-//            @PathVariable String loginId
-//    )
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponseDto<String>> logout(
+            @RequestHeader("Authorization") String token
+    ) {
+        return ResponseEntity.ok(ApiResponseDto.success("로그아웃이 완료되었습니다."));
+    }
 }

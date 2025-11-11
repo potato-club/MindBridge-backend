@@ -38,8 +38,7 @@ public class SecurityConfig {
             "/api/auth/reissue",
             "/api/auth/check-id",
             "/api/auth/check-nickname",
-            "/api/sms/send",
-            "/api/sms/verify"
+            "/api/auth/logout"
     };
 
     @Bean
@@ -48,8 +47,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .formLogin(form -> form.disable())
-                .httpBasic(basic -> basic.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(ALLOW_URLS).permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
