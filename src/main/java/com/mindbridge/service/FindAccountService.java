@@ -37,6 +37,21 @@ public class FindAccountService {
             throw new RuntimeException("새 비밀번호가 일치하지 않습니다.");
         }
 
+        String newPw = req.getNewPassword();
+
+        if (newPw.length() < 8) {
+            throw new RuntimeException("비밀번호는 8자 이상이어야 합니다.");
+        }
+
+        String regex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+=-]).{8,}$";
+        if (!newPw.matches(regex)) {
+            throw new RuntimeException("비밀번호는 영문, 숫자, 특수문자를 포함해야 합니다.");
+        }
+
+        if (!passwordEncoder.matches(newPw, user.getPassword())) {
+            throw new RuntimeException("이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다.");
+        }
+
         user.setPassword(passwordEncoder.encode(req.getNewPassword()));
         userRepository.save(user);
     }
