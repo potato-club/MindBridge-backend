@@ -5,6 +5,7 @@ import com.mindbridge.dto.FindPasswordRequestDto;
 import com.mindbridge.dto.ResetPasswordRequestDto;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class FindAccountService {
         return true;
     }
 
+    @Transactional
     public void resetPassword(ResetPasswordRequestDto req) {
         UserEntity user = userRepository.findByUserid(req.getUserid())
                 .orElseThrow(() -> new RuntimeException("계정을 찾을 수 없습니다."));
