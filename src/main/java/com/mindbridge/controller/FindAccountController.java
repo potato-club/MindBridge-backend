@@ -5,7 +5,6 @@ import com.mindbridge.dto.FindIdRequestDto;
 import com.mindbridge.dto.FindPasswordRequestDto;
 import com.mindbridge.dto.ResetPasswordRequestDto;
 import com.mindbridge.service.FindAccountService;
-import com.mindbridge.util.SmsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class FindAccountController {
     private final FindAccountService findAccountService;
-    private final SmsService smsService;
-
-    @PostMapping("/send-code")
-    public ApiResponseDto<String> sendCode(@RequestParam String phoneNumber) {
-        String code = smsService.sendCode(phoneNumber);
-        return new ApiResponseDto<>(true, "인증번호 발송 성공", code);
-    }
 
     @PostMapping("/find-id")
     public ApiResponseDto<String> findId(@RequestBody FindIdRequestDto req) {
