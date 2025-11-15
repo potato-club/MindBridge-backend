@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/account")
 @RequiredArgsConstructor
-public class FindAccoutController {
+public class FindAccountController {
     private final FindAccountService findAccountService;
     private final SmsService smsService;
 
