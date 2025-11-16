@@ -19,8 +19,8 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "profile_image_id", nullable = true)
-    private Long profileImageId;
+    @Column(name = "profile_image")
+    private String profileImage;
 
     @Column(name = "username", nullable = false, length = 50)
     private String username;
