@@ -4,6 +4,8 @@ import com.mindbridge.dto.FindIdRequestDto;
 import com.mindbridge.dto.FindPasswordRequestDto;
 import com.mindbridge.dto.ResetPasswordRequestDto;
 import com.mindbridge.entity.UserEntity;
+import com.mindbridge.error.ErrorCode;
+import com.mindbridge.error.customExceptions.CustomException;
 import com.mindbridge.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,44 +19,42 @@ public class FindAccountService {
     private final PasswordEncoder passwordEncoder;
 
     public String findUserId(FindIdRequestDto req) {
-        UserEntity user = userRepository.findByUsernameAndPhoneNumber(req.getUsername(), req.getPhoneNumber())
-                .orElseThrow(() -> new RuntimeException("계정이 존재하지 않습니다."));
+        UserEntity user = userRepository.findByUsernameAndPhoneNumber(req.username(), req.phoneNumber())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         return user.getUserid();
     }
 
-    public boolean verifyForPasswordReset(FindPasswordRequestDto req) {
-        userRepository.findByUseridAndPhoneNumber(req.getUserid(), req.getPhoneNumber())
-                .orElseThrow(() -> new RuntimeException("계정이 존재하지 않습니다."));
-
-        return true;
+    public void verifyForPasswordReset(FindPasswordRequestDto req) {
+        userRepository.findByUseridAndPhoneNumber(req.userid(), req.phoneNumber())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     @Transactional
     public void resetPassword(ResetPasswordRequestDto req) {
-        UserEntity user = userRepository.findByUserid(req.getUserid())
-                .orElseThrow(() -> new RuntimeException("계정을 찾을 수 없습니다."));
+        UserEntity user = userRepository.findByUserid(req.userid())
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if (!req.getNewPassword().equals(req.getConfirmPassword())) {
-            throw new RuntimeException("새 비밀번호가 일치하지 않습니다.");
+        if (!req.newPassword().equals(req.confirmPassword())) {
+            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
         }
 
-        String newPw = req.getNewPassword();
+        String newPw = req.newPassword();
 
         if (newPw.length() < 8) {
-            throw new RuntimeException("비밀번호는 8자 이상이어야 합니다.");
+            throw new CustomException(ErrorCode.PASSWORD_TOO_SHORT);
         }
 
         String regex = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#$%^&*()_+=-]).{8,}$";
         if (!newPw.matches(regex)) {
-            throw new RuntimeException("비밀번호는 영문, 숫자, 특수문자를 포함해야 합니다.");
+            throw new CustomException(ErrorCode.PASSWORD_REGEX_NOT_VALID);
         }
 
-        if (!passwordEncoder.matches(newPw, user.getPassword())) {
-            throw new RuntimeException("이전 비밀번호와 동일한 비밀번호는 사용할 수 없습니다.");
+        if (passwordEncoder.matches(newPw, user.getPassword())) {
+            throw new CustomException(ErrorCode.PASSWORD_SAME_AS_OLD);
         }
 
-        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(newPw));
         userRepository.save(user);
     }
 }

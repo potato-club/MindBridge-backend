@@ -18,7 +18,7 @@ public class FindAccountController {
     @PostMapping("/find-id")
     public ApiResponseDto<String> findId(@RequestBody FindIdRequestDto req) {
         String userid = findAccountService.findUserId(req);
-        return new ApiResponseDto<>(true, "아이디 찾기 성공", userid);
+        return ApiResponseDto.success("아이디 찾기 성공", userid);
     }
 
     @PostMapping("/find-password")
