@@ -4,7 +4,7 @@ import com.mindbridge.dto.RequestDto.PostCreateRequestDto;
 import com.mindbridge.dto.ResponseDto.PostListResponseDto;
 import com.mindbridge.dto.ResponseDto.PostResponseDto;
 import com.mindbridge.dto.RequestDto.PostUpdateRequestDto;
-import com.mindbridge.dto.ResponseDto.PostSliceResponseDto;
+import com.mindbridge.dto.ResponseDto.PageResponseDto;
 import com.mindbridge.entity.PostEntity;
 import com.mindbridge.entity.enums.Category;
 import com.mindbridge.error.ErrorCode;
@@ -13,8 +13,8 @@ import com.mindbridge.mapper.PostMapper;
 import com.mindbridge.repository.PostRepository;
 import com.mindbridge.service.post.PostRedisService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,12 +36,20 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional(readOnly = true)
-    public PostSliceResponseDto<PostListResponseDto> getAllPosts(Category category, int page, int size) {
+    public PageResponseDto<PostListResponseDto> getAllPosts(Category category, int page, int size) {
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
-        Slice<PostListResponseDto> posts = postRepository.findByCategory(category, pageRequest);
+        Page<PostListResponseDto> posts = postRepository.findByCategory(category, pageRequest);
 
-        return new PostSliceResponseDto<>(category, posts.getContent(), posts.hasNext());
+        return new PageResponseDto<>(
+                category,
+                posts.getContent(),
+                posts.getNumber(),
+                posts.getSize(),
+                posts.getTotalElements(),
+                posts.getTotalPages(),
+                posts.isLast()
+                );
     }
 
     @Override
@@ -74,8 +82,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void deletePost(Long id) {
-        postRepository.deleteById(id);
+    public void deletePost(long postId, long userId) {
+        PostEntity post = postRepository.findById(postId)
+                        .orElseThrow(() -> new PostNotFoundException(ErrorCode.POST_NOT_FOUND));
+
+        if(!post.getUser().getId().equals(userId)) {
+            throw new PostNotFoundException(ErrorCode.NO_PERMISSION);
+        }
+
+        postRepository.deleteById(postId);
     }
 
 }

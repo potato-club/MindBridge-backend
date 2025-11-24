@@ -4,8 +4,12 @@ import com.mindbridge.entity.enums.Category;
 
 import java.util.List;
 
-public record PostSliceResponseDto<T>(
+public record PageResponseDto<T>(
         Category category,
         List<T> contents,
-        boolean hasNext
+        int page,
+        int size,
+        long totalElements,
+        int totalPage,
+        boolean last
 ) {}

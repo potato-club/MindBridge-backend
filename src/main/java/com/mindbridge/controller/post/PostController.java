@@ -4,7 +4,7 @@ import com.mindbridge.dto.RequestDto.PostCreateRequestDto;
 import com.mindbridge.dto.RequestDto.PostUpdateRequestDto;
 import com.mindbridge.dto.ResponseDto.PostListResponseDto;
 import com.mindbridge.dto.ResponseDto.PostResponseDto;
-import com.mindbridge.dto.ResponseDto.PostSliceResponseDto;
+import com.mindbridge.dto.ResponseDto.PageResponseDto;
 import com.mindbridge.entity.enums.Category;
 import com.mindbridge.jwt.CustomUserDetails;
 import com.mindbridge.service.post.CRUD.PostService;
@@ -33,12 +33,12 @@ public class PostController {
 
     @Operation(summary = "전체 게시글 조회 by 조민기")
     @GetMapping
-    public ResponseEntity<PostSliceResponseDto<PostListResponseDto>> getAllPosts(
+    public ResponseEntity<PageResponseDto<PostListResponseDto>> getAllPosts(
             @RequestParam Category category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size
             ) {
-        PostSliceResponseDto<PostListResponseDto> postResponseDto = postService.getAllPosts(category, page, size);
+        PageResponseDto<PostListResponseDto> postResponseDto = postService.getAllPosts(category, page, size);
         return ResponseEntity.ok(postResponseDto);
     }
 
@@ -61,8 +61,13 @@ public class PostController {
     @Operation(summary = "게시글 삭제 by 조민기")
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(
-            @PathVariable Long postId) {
-        postService.deletePost(postId);
+            @PathVariable Long postId,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        long userId = userDetails.getId();
+
+        postService.deletePost(postId, userId);
+
         return ResponseEntity.noContent().build();
     }
 }

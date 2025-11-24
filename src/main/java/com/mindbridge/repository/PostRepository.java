@@ -4,9 +4,9 @@ import com.mindbridge.dto.ResponseDto.PostListResponseDto;
 import com.mindbridge.dto.ResponseDto.PostResponseDto;
 import com.mindbridge.entity.PostEntity;
 import com.mindbridge.entity.enums.Category;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,7 +36,7 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
        WHERE (:category = 'ALL' OR category = :category)
        ORDER BY id DESC
        """)
-    Slice<PostListResponseDto> findByCategory(@Param("category") Category category, PageRequest pageRequest);
+    Page<PostListResponseDto> findByCategory(@Param("category") Category category, PageRequest pageRequest);
 
     @Query("""
     SELECT new com.mindbridge.dto.ResponseDto.PostResponseDto(
@@ -78,7 +78,7 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
                OR LOWER(contents) LIKE LOWER(CONCAT('%', :keyword, '%')))
         ORDER BY id DESC
     """)
-    Slice<PostListResponseDto> searchPostsByKeyword(
+    Page<PostListResponseDto> searchPostsByKeyword(
             @Param("category") Category category,
             @Param("keyword") String keyword,
             Pageable pageable

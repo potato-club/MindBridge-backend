@@ -1,12 +1,12 @@
 package com.mindbridge.service.post.Search;
 
 import com.mindbridge.dto.ResponseDto.PostListResponseDto;
-import com.mindbridge.dto.ResponseDto.PostSliceResponseDto;
+import com.mindbridge.dto.ResponseDto.PageResponseDto;
 import com.mindbridge.entity.enums.Category;
 import com.mindbridge.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +18,19 @@ public class PostSearchServiceImpl implements PostSearchService {
 
     @Override
     @Transactional
-    public PostSliceResponseDto<PostListResponseDto> searchPosts(Category category, String keyword, int page, int size) {
+    public PageResponseDto<PostListResponseDto> searchPosts(Category category, String keyword, int page, int size) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
 
-        Slice<PostListResponseDto> posts = postRepository.searchPostsByKeyword( category, keyword, pageRequest);
+        Page<PostListResponseDto> posts = postRepository.searchPostsByKeyword( category, keyword, pageRequest);
 
-        return new PostSliceResponseDto<>(category, posts.getContent(), posts.hasNext());
+        return new PageResponseDto<>(
+                category,
+                posts.getContent(),
+                posts.getNumber(),
+                posts.getSize(),
+                posts.getTotalElements(),
+                posts.getTotalPages(),
+                posts.isLast()
+        );
     }
 }

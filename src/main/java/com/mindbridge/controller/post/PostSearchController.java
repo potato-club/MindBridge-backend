@@ -1,7 +1,7 @@
 package com.mindbridge.controller.post;
 
 import com.mindbridge.dto.ResponseDto.PostListResponseDto;
-import com.mindbridge.dto.ResponseDto.PostSliceResponseDto;
+import com.mindbridge.dto.ResponseDto.PageResponseDto;
 import com.mindbridge.entity.enums.Category;
 import com.mindbridge.service.post.Search.PostSearchService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,13 +20,13 @@ public class PostSearchController {
 
     @Operation(summary = "게시글 검색 by 조민기")
     @GetMapping()
-    public ResponseEntity<PostSliceResponseDto<PostListResponseDto>> searchPosts(
+    public ResponseEntity<PageResponseDto<PostListResponseDto>> searchPosts(
             @RequestParam Category category,
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "12") int size) {
 
-        PostSliceResponseDto<PostListResponseDto> postResponseDTOs = postSearchService.searchPosts(category, keyword, page, size);
+        PageResponseDto<PostListResponseDto> postResponseDTOs = postSearchService.searchPosts(category, keyword, page, size);
 
         return ResponseEntity.ok(postResponseDTOs);
     }
