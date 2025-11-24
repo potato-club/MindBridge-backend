@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/post/search")
+@RequestMapping("/api/post")
 public class PostSearchController {
     private final PostSearchService postSearchService;
 
     @Operation(summary = "게시글 검색 by 조민기")
-    @GetMapping()
+    @GetMapping("/search")
     public ResponseEntity<PageResponseDto<PostListResponseDto>> searchPosts(
             @RequestParam Category category,
             @RequestParam String keyword,

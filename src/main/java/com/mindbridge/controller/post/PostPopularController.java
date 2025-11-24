@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/post")
+@RequestMapping("/api/post")
 public class PostPopularController {
     private final PostPopularService postPopularService;
 
