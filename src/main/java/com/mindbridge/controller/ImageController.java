@@ -5,6 +5,7 @@ import com.mindbridge.dto.ResponseDto.ProfileImageResponseDto;
 import com.mindbridge.entity.ProfileImageEntity;
 import com.mindbridge.jwt.CustomUserDetails;
 import com.mindbridge.service.ProfileImageService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/body-image")
+@RequestMapping("/api/profileImage")
 @RequiredArgsConstructor
 @Slf4j
 public class ImageController {
     private final ProfileImageService profileImageService;
 
+    @Operation(summary = "프로필 이미지 조회 by 조민기")
     @GetMapping
     public ResponseEntity<ProfileImageResponseDto> getMainProfilePhoto(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -30,6 +32,7 @@ public class ImageController {
         return ResponseEntity.ok(profileImageService.getMainProfileImage(userId));
     }
 
+    @Operation(summary = "프로필 이미지 히스토리 by 조민기")
     @GetMapping("/history")
     public ResponseEntity<List<ProfileImageEntity>> getProfileImages(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
@@ -40,17 +43,19 @@ public class ImageController {
         return ResponseEntity.ok(profileImageEntityList);
     }
 
+    @Operation(summary = "프로필 이미지 업로드 by 조민기")
     @PostMapping()
-    public ResponseEntity<ProfileImageRequestDto> uploadProfileImage(
+    public ResponseEntity<List<String>> uploadProfileImage(
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestPart(value = "image", required = false) MultipartFile image) {
 
         long userId = userDetails.getId();
         String url = profileImageService.uploadProfileImage(image, userId);
-
-        return ResponseEntity.ok(new ProfileImageRequestDto(url));
+        System.out.println("USER ID = " + userId);
+        return ResponseEntity.ok(List.of(url));
     }
 
+    @Operation(summary = "이미지 삭제 by 조민기")
     @DeleteMapping
     public ResponseEntity<String> deleteImage(
             @RequestBody ProfileImageRequestDto dto) {

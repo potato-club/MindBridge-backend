@@ -8,10 +8,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ProfileImageRepository extends JpaRepository<ProfileImageEntity, Long> {
     ProfileImageEntity findFirstUrlByUserIdOrderByRecordedAtDesc(long userId);
+
+    Optional<ProfileImageEntity> findByUserId(Long userId);
 
     @Modifying
     @Query("DELETE FROM ProfileImageEntity b WHERE b.url = :imageUrl")

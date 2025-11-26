@@ -3,6 +3,7 @@ package com.mindbridge.entity;
 import com.mindbridge.entity.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "profile_image_id", nullable = true)
+    @Column(name = "profile_image_id")
     private Long profileImageId;
 
     @Column(name = "username", nullable = false, length = 50)
@@ -50,5 +51,6 @@ public class UserEntity {
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
+    @CreationTimestamp
     private LocalDateTime updatedAt;
 }
