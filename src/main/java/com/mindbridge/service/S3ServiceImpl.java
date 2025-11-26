@@ -3,7 +3,6 @@ package com.mindbridge.service;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.EmptyFileException;
 import com.mindbridge.error.customExceptions.S3UploadFailException;
-import com.mindbridge.repository.ProfileImageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +28,6 @@ import java.util.UUID;
 public class S3ServiceImpl implements S3Service{
 
     private final S3Client s3Client;
-    private final ProfileImageRepository profileImageRepository;
 
     @Value("${cloud.aws.s3.bucket-name}")
     private String bucketName;
@@ -92,7 +90,6 @@ public class S3ServiceImpl implements S3Service{
                     .build();
 
             s3Client.deleteObject(deleteObjectRequest);
-            profileImageRepository.deleteByUrl(imageUrl);
         } catch (Exception e) {
             throw new EmptyFileException(ErrorCode.S3_DELETE_FAILED);
         }

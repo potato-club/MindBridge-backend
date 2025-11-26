@@ -1,10 +1,10 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.RequestDto.ProfileImageRequestDto;
 import com.mindbridge.dto.ResponseDto.ProfileImageResponseDto;
 import com.mindbridge.entity.ProfileImageEntity;
 import com.mindbridge.entity.UserEntity;
 import com.mindbridge.error.ErrorCode;
+import com.mindbridge.error.customExceptions.InvalidImageFileException;
 import com.mindbridge.error.customExceptions.UserNotFoundException;
 import com.mindbridge.repository.ProfileImageRepository;
 import com.mindbridge.repository.UserRepository;
@@ -81,11 +81,15 @@ public class ProfileImageServiceImpl implements ProfileImageService{
     }
 
     @Override
-    public void deleteImage(ProfileImageRequestDto profileImageRequestDto) {
+    public void deleteImage(long imageId, long currentUserId) {
+        ProfileImageEntity image = profileImageRepository.findById(imageId)
+                        .orElseThrow(() -> new InvalidImageFileException(ErrorCode.EMPTY_FILE));
 
-        String imageUrl = profileImageRequestDto.imageUrl();
+        if (!image.getUserId().equals(currentUserId)) {
+            throw new IllegalArgumentException("권한이 없습니다.");
+        }
 
-        s3Service.deleteImageFromS3(imageUrl);
-        profileImageRepository.deleteByUrl(imageUrl);
+        s3Service.deleteImageFromS3(image.getUrl());
+        profileImageRepository.deleteById(image.getId());
     }
 }

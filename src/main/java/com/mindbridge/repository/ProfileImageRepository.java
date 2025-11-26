@@ -17,9 +17,9 @@ public interface ProfileImageRepository extends JpaRepository<ProfileImageEntity
     Optional<ProfileImageEntity> findByUserId(Long userId);
 
     @Modifying
-    @Query("DELETE FROM ProfileImageEntity b WHERE b.url = :imageUrl")
+    @Query("DELETE FROM ProfileImageEntity b WHERE b.id = :imageId")
     @Transactional
-    void deleteByUrl(String imageUrl);
+    void deleteByUrl(Long imageId);
 
     List<ProfileImageEntity> findByUserIdOrderByRecordedAtDesc(long userId);
 }

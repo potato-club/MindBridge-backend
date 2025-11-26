@@ -1,6 +1,6 @@
 package com.mindbridge.controller;
 
-import com.mindbridge.dto.RequestDto.ProfileImageRequestDto;
+import com.mindbridge.dto.RequestDto.ProfileImageDeleteRequestDto;
 import com.mindbridge.dto.ResponseDto.ProfileImageResponseDto;
 import com.mindbridge.entity.ProfileImageEntity;
 import com.mindbridge.jwt.CustomUserDetails;
@@ -58,9 +58,12 @@ public class ImageController {
     @Operation(summary = "이미지 삭제 by 조민기")
     @DeleteMapping
     public ResponseEntity<String> deleteImage(
-            @RequestBody ProfileImageRequestDto dto) {
+            @RequestBody ProfileImageDeleteRequestDto dto,
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        profileImageService.deleteImage(dto);
-        return ResponseEntity.ok("Body image deleted successfully.");
+        long userId = userDetails.getId();
+
+        profileImageService.deleteImage(dto.imageId(), userId);
+        return ResponseEntity.ok("profile image deleted successfully.");
     }
 }
