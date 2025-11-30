@@ -47,11 +47,6 @@ public class AuthService{
             throw new CustomException(ErrorCode.DUPLICATE_PHONE_NUMBER);
         }
 
-        // 비밀번호 확인
-        if (!req.getPassword().equals(req.getConfirmPassword())) {
-            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
-        }
-
         // 유저 저장
         UserEntity user = UserEntity.builder()
                 .loginId(req.getLoginId())

@@ -34,4 +34,8 @@ public class SignupRequestDto {
 
     private LocalDate birthDate;
 
+    @AssertTrue(message = "비밀번호가 일치하지 않습니다.")
+    public boolean isPasswordMatch() {
+        return password != null && password.equals(confirmPassword);
+    }
 }

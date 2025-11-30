@@ -33,7 +33,7 @@ public class AuthController {
     }
 
     @PostMapping("/check-id")
-    public ResponseEntity<ApiResponseDto<String>> checkDuplicateLoginId(@RequestBody CheckLoginIdRequestDto requestDto) {
+    public ResponseEntity<ApiResponseDto<Boolean>> checkDuplicateLoginId(@Valid @RequestBody CheckLoginIdRequestDto requestDto) {
         boolean isDuplicate = authService.isDuplicateLoginId(requestDto.getLoginId());
 
         if (isDuplicate) {
