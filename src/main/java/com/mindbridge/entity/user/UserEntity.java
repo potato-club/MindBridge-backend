@@ -1,4 +1,4 @@
-package com.mindbridge.entity;
+package com.mindbridge.entity.user;
 
 import com.mindbridge.entity.enums.Gender;
 import jakarta.persistence.*;
@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name = "users")
-public class UserEntity {
+public class UserEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

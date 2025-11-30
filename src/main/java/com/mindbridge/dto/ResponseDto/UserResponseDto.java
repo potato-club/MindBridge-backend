@@ -1,6 +1,6 @@
 package com.mindbridge.dto.ResponseDto;
 
-import com.mindbridge.entity.UserEntity;
+import com.mindbridge.entity.user.UserEntity;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 

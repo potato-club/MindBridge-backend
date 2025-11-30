@@ -1,10 +1,10 @@
-package com.mindbridge.entity;
+package com.mindbridge.entity.post;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -12,9 +12,8 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@Table(name = "profile_photo")
-public class ProfileImageEntity {
+@Table(name = "bookmark")
+public class BookmarkEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,9 +21,9 @@ public class ProfileImageEntity {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "profileUrl", nullable = false, length = 255)
-    private String url;
+    @Column(name = "post_id")
+    private Long postId;
 
-    @Column(name = "recorded_at", nullable = false)
-    private LocalDateTime recordedAt;
+    @CreationTimestamp
+    private LocalDateTime recordAt;
 }

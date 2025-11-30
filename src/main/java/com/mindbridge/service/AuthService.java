@@ -4,7 +4,7 @@ import com.mindbridge.dto.RequestDto.LoginRequestDto;
 import com.mindbridge.dto.ResponseDto.LoginResponseDto;
 import com.mindbridge.dto.ResponseDto.TokenResponseDto;
 import com.mindbridge.dto.RequestDto.SignupRequestDto;
-import com.mindbridge.entity.UserEntity;
+import com.mindbridge.entity.user.UserEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.CustomException;
 import com.mindbridge.error.customExceptions.UnauthorizedException;
@@ -19,8 +19,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
@@ -64,21 +62,20 @@ public class AuthService{
                 .gender(req.getGender())
                 .birthDate(req.getBirthDate())
                 .verified(false)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         return userRepository.save(user);
     }
 
-    public LoginResponseDto login(LoginRequestDto req, HttpServletResponse httpServletResponse) {
-        String loginId = req.loginId();
-        String password = req.password();
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String BEARER_PREFIX = "Bearer ";
 
-        UserEntity user = userRepository.findByLoginId(loginId)
+    public LoginResponseDto login(LoginRequestDto req, HttpServletResponse httpServletResponse) {
+
+        UserEntity user = userRepository.findByLoginId(req.loginId())
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
         }
 
@@ -89,7 +86,7 @@ public class AuthService{
         String accessToken = jwtUtil.createAccessToken(userId, username, nickname);
         String refreshToken = jwtUtil.createRefreshToken(userId);
 
-        httpServletResponse.setHeader("Authorization", "Bearer " + accessToken);
+        httpServletResponse.setHeader(AUTHORIZATION_HEADER,BEARER_PREFIX + accessToken);
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)

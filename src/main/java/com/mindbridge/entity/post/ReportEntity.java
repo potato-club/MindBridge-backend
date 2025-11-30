@@ -1,4 +1,4 @@
-package com.mindbridge.entity;
+package com.mindbridge.entity.post;
 
 import com.mindbridge.entity.enums.TargetType;
 import jakarta.persistence.*;
