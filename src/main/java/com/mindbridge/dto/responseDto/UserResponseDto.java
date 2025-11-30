@@ -1,4 +1,4 @@
-package com.mindbridge.dto.ResponseDto;
+package com.mindbridge.dto.responseDto;
 
 import com.mindbridge.entity.user.UserEntity;
 import jakarta.validation.constraints.NotNull;

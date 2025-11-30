@@ -1,4 +1,4 @@
-package com.mindbridge.dto.ResponseDto;
+package com.mindbridge.dto.responseDto;
 
 public record TokenResponseDto(
         String token

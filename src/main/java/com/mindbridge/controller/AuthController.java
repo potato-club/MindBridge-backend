@@ -1,10 +1,10 @@
 package com.mindbridge.controller;
 
-import com.mindbridge.dto.RequestDto.*;
-import com.mindbridge.dto.ResponseDto.ApiResponseDto;
-import com.mindbridge.dto.ResponseDto.LoginResponseDto;
-import com.mindbridge.dto.ResponseDto.TokenResponseDto;
-import com.mindbridge.dto.ResponseDto.UserResponseDto;
+import com.mindbridge.dto.requestDto.*;
+import com.mindbridge.dto.responseDto.ApiResponseDto;
+import com.mindbridge.dto.responseDto.LoginResponseDto;
+import com.mindbridge.dto.responseDto.TokenResponseDto;
+import com.mindbridge.dto.responseDto.UserResponseDto;
 import com.mindbridge.entity.user.UserEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.CustomException;

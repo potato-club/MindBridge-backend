@@ -1,9 +1,9 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.RequestDto.LoginRequestDto;
-import com.mindbridge.dto.ResponseDto.LoginResponseDto;
-import com.mindbridge.dto.ResponseDto.TokenResponseDto;
-import com.mindbridge.dto.RequestDto.SignupRequestDto;
+import com.mindbridge.dto.requestDto.LoginRequestDto;
+import com.mindbridge.dto.responseDto.LoginResponseDto;
+import com.mindbridge.dto.responseDto.TokenResponseDto;
+import com.mindbridge.dto.requestDto.SignupRequestDto;
 import com.mindbridge.entity.user.UserEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.CustomException;

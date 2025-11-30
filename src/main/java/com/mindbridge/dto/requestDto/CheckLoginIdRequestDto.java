@@ -1,4 +1,4 @@
-package com.mindbridge.dto.RequestDto;
+package com.mindbridge.dto.requestDto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
