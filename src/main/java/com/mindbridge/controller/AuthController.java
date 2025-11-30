@@ -1,5 +1,8 @@
 package com.mindbridge.controller;
 
+import static com.mindbridge.config.SecurityConstants.*;
+
+import com.mindbridge.dto.LoginTokens;
 import com.mindbridge.dto.requestDto.*;
 import com.mindbridge.dto.responseDto.ApiResponseDto;
 import com.mindbridge.dto.responseDto.LoginResponseDto;
@@ -10,9 +13,11 @@ import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.CustomException;
 import com.mindbridge.jwt.CustomUserDetails;
 import com.mindbridge.service.AuthService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +27,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
+
+    @Value("${jwt.refresh-expiration-ms}")
+    private Long refreshExpMs;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponseDto<UserResponseDto>> signup(@Valid @RequestBody SignupRequestDto req) {
@@ -53,11 +61,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(
-            @RequestBody LoginRequestDto req,
-            HttpServletResponse httpServletResponse) {
-        LoginResponseDto loginResponseDto = authService.login(req, httpServletResponse);
-        return ResponseEntity.ok(loginResponseDto);
+    public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(
+            @Valid @RequestBody LoginRequestDto req) {
+
+        LoginTokens tokens = authService.login(req);
+
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", tokens.refreshToken())
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(refreshExpMs)
+                .sameSite("None")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + tokens.accessToken())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body(ApiResponseDto.success("로그인 성공", new LoginResponseDto(tokens.accessToken())));
     }
 
     @PostMapping("/reissue")

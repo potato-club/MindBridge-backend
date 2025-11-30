@@ -1,7 +1,7 @@
 package com.mindbridge.service;
 
+import com.mindbridge.dto.LoginTokens;
 import com.mindbridge.dto.requestDto.LoginRequestDto;
-import com.mindbridge.dto.responseDto.LoginResponseDto;
 import com.mindbridge.dto.responseDto.TokenResponseDto;
 import com.mindbridge.dto.requestDto.SignupRequestDto;
 import com.mindbridge.entity.user.UserEntity;
@@ -11,11 +11,8 @@ import com.mindbridge.error.customExceptions.UnauthorizedException;
 import com.mindbridge.error.customExceptions.UserNotFoundException;
 import com.mindbridge.jwt.JwtUtil;
 import com.mindbridge.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +26,6 @@ public class AuthService{
     private final JwtUtil jwtUtil;
 
     @Value("${jwt.token.refresh-expiration-time}")
-    private Long refreshExpMs;
 
     public UserEntity signup(SignupRequestDto req) {
         // 아이디 중복 확인
@@ -62,10 +58,8 @@ public class AuthService{
         return userRepository.save(user);
     }
 
-    public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String BEARER_PREFIX = "Bearer ";
 
-    public LoginResponseDto login(LoginRequestDto req, HttpServletResponse httpServletResponse) {
+    public LoginTokens login(LoginRequestDto req) {
 
         UserEntity user = userRepository.findByLoginId(req.loginId())
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
@@ -81,18 +75,7 @@ public class AuthService{
         String accessToken = jwtUtil.createAccessToken(userId, username, nickname);
         String refreshToken = jwtUtil.createRefreshToken(userId);
 
-        httpServletResponse.setHeader(AUTHORIZATION_HEADER,BEARER_PREFIX + accessToken);
-
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(refreshExpMs)
-                .sameSite("None")
-                .build();
-        httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
-
-        return new LoginResponseDto(accessToken);
+        return new LoginTokens(accessToken, refreshToken);
     }
 
     public TokenResponseDto reissue(String refreshToken) {
