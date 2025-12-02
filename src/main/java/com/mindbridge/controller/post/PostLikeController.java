@@ -30,9 +30,12 @@ public class PostLikeController {
     }
 
     @Operation(summary = "게시글 좋아요 조회 by 조민기")
-    @GetMapping("/liked/{userId}")
+    @GetMapping("/liked}")
     public ResponseEntity<List<PostResponseDto>> getLikedPosts(
-            @PathVariable Long userId) {
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        long userId = userDetails.getId();
+
         List<PostResponseDto> likedPosts = postLikeService.getLikedPosts(userId);
         return ResponseEntity.ok(likedPosts);
     }
