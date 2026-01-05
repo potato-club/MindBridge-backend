@@ -30,7 +30,7 @@ public class PostLikeController {
     }
 
     @Operation(summary = "게시글 좋아요 조회 by 조민기")
-    @GetMapping("/liked}")
+    @GetMapping("/liked")
     public ResponseEntity<List<PostResponseDto>> getLikedPosts(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
