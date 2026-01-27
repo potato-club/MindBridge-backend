@@ -39,7 +39,7 @@ public class AuthService{
         UserEntity user = UserEntity.builder()
                 .loginId(req.getLoginId())
                 .username(req.getUsername())
-                .nickname(req.getUsername())
+                .nickname(req.getNickname())
                 .password(passwordEncoder.encode(req.getPassword()))
                 .phoneNumber(req.getPhoneNumber())
                 .gender(req.getGender())
