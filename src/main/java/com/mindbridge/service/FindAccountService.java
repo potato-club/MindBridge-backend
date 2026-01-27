@@ -35,9 +35,6 @@ public class FindAccountService {
         UserEntity user = userRepository.findByUserid(req.userid())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        if (!req.newPassword().equals(req.confirmPassword())) {
-            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
-        }
 
         String newPw = req.newPassword();
 
