@@ -35,11 +35,6 @@ public class AuthService{
             throw new RuntimeException("이미 등록된 전화번호입니다.");
         }
 
-        // 비밀번호 확인
-        if (!req.getPassword().equals(req.getConfirmPassword())) {
-            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
-        }
-
         // 유저 저장
         UserEntity user = UserEntity.builder()
                 .loginId(req.getLoginId())
