@@ -1,9 +1,10 @@
 package com.mindbridge.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import com.mindbridge.error.ErrorCode;
+import com.mindbridge.error.customExceptions.UnauthorizedException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -70,6 +71,28 @@ public class JwtUtil {
             return true;
         } catch (JwtException e) {
             return false;
+        }
+    }
+
+    public Claims validateAndGetClaims(String token) throws Exception {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+        } catch (ExpiredJwtException e) {
+            throw new UnauthorizedException(ErrorCode.JWT_EXPIRED);
+        } catch (MalformedJwtException e) {
+            throw new UnauthorizedException(ErrorCode.INVALID_JWT);
+        } catch (SignatureException e) {
+            throw new UnauthorizedException(ErrorCode.JWT_SIGNATURE_INVALID);
+        } catch (UnsupportedJwtException e) {
+            throw new UnauthorizedException(ErrorCode.JWT_UNSUPPORTED);
+        } catch (Exception e) {
+            log.error("JWT parsing error", e); // 서버 에러는 로그 남기기
+            throw new UnauthorizedException(ErrorCode.INTER_SERVER_ERROR);
         }
     }
 

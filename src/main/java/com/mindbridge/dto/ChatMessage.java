@@ -8,5 +8,4 @@ public record ChatMessage(
         String message,
         String senderProfileUrl,
         LocalDateTime sendTime
-) {
-}
+) {}

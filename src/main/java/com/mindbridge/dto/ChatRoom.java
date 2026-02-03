@@ -5,5 +5,4 @@ public record ChatRoom(
         String roomName,
         String lastMessage,
         String imgUrl
-) {
-}
+) {}

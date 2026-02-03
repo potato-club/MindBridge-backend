@@ -1,7 +1,9 @@
 package com.mindbridge.service.chat.room;
 
+import com.mindbridge.dto.ChatRoom;
 import com.mindbridge.dto.RequestDto.chat.ChatRoomCreateRequestDto;
 import com.mindbridge.dto.ResponseDto.chat.ChatRoomCreateResponseDto;
+import com.mindbridge.dto.ResponseDto.chat.ChatRoomListResponseDto;
 import com.mindbridge.entity.ChatRoomEntity;
 import com.mindbridge.entity.ChatRoomMemberEntity;
 import com.mindbridge.repository.ChatMessageRepository;
@@ -43,6 +45,13 @@ public class ChatRoomServiceImpl implements ChatRoomService{
         }
 
         return new ChatRoomCreateResponseDto(chatRoom.getId());
+    }
+
+    @Override
+    public ChatRoomListResponseDto getChatRoomList(Long userId) {
+        List<ChatRoom> chatRooms = chatRoomRepository.getChatRoomList(userId);
+
+        return new ChatRoomListResponseDto(chatRooms);
     }
 
     @Override
