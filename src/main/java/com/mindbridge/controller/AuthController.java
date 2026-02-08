@@ -83,9 +83,21 @@ public class AuthController {
     @PostMapping("/reissue")
     public ResponseEntity<TokenResponseDto> reissue(
             @CookieValue("refreshToken") String refreshToken) {
-        TokenResponseDto tokenResponseDto = authService.reissue(refreshToken);
+        TokenResponseDto tokens = authService.reissue(refreshToken);
+        ResponseCookie cookie =
+                ResponseCookie.from(
+                                "refreshToken",
+                                tokens.refreshToken()
+                        )
+                        .httpOnly(true)
+                        .path("/")
+                        .maxAge(refreshExpMs)
+                        .sameSite("None")
+                        .build();
 
-        return ResponseEntity.ok(tokenResponseDto);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(tokens);
     }
 
     @PostMapping("/logout")

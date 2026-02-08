@@ -54,4 +54,7 @@ public class UserEntity extends BaseEntity {
 
     @Column(nullable = false)
     private boolean isDeleted = false;
+
+    @Column(name = "refresh_token", length = 512)
+    private String refreshToken;
 }

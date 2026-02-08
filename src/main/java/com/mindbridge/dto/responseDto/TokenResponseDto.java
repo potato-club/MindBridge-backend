@@ -1,5 +1,6 @@
 package com.mindbridge.dto.responseDto;
 
 public record TokenResponseDto(
-        String token
+        String accessToken,
+        String refreshToken
 ) {}
