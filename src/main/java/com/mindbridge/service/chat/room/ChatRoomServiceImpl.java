@@ -6,6 +6,7 @@ import com.mindbridge.dto.ResponseDto.chat.ChatRoomCreateResponseDto;
 import com.mindbridge.dto.ResponseDto.chat.ChatRoomListResponseDto;
 import com.mindbridge.entity.ChatRoomEntity;
 import com.mindbridge.entity.ChatRoomMemberEntity;
+import com.mindbridge.entity.enums.Category;
 import com.mindbridge.repository.ChatMessageRepository;
 import com.mindbridge.repository.ChatRoomMemberRepository;
 import com.mindbridge.repository.ChatRoomRepository;
@@ -48,11 +49,30 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     }
 
     @Override
-    public ChatRoomListResponseDto getChatRoomList(Long userId) {
-        List<ChatRoom> chatRooms = chatRoomRepository.getChatRoomList(userId);
+    public ChatRoomListResponseDto getMyChatRoomList(Long userId) {// 내가 진행중인 채팅
+        List<ChatRoom> chatRooms = chatRoomRepository.getMyChatRoomList(userId);
 
         return new ChatRoomListResponseDto(chatRooms);
     }
+
+    @Override
+    public ChatRoomListResponseDto getChatRoomList(String category) {
+        List<ChatRoomEntity> rooms;
+
+        if (category == null || category.equalsIgnoreCase("ALL")) {
+            rooms = chatRoomRepository.findByActiveTrueOrderByCreatedAtDesc();
+        } else {
+            Category topic =  Category.valueOf(category);
+            rooms = chatRoomRepository.findByTopicAndActiveTrueOrderByCreatedAtDesc(topic);
+        }
+
+        return rooms.stream()
+                .map(room -> new ChatRoomListResponseDto(
+                        room.getId(),
+                        room.getRoomName(),
+                        room.getCategory()
+                )).toList();
+    }//roomId, category, roomName, contents, userId, username(nickname), procfileImgUrl, time(남은시간)
 
     @Override
     @Transactional

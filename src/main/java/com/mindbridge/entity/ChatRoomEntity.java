@@ -1,5 +1,6 @@
 package com.mindbridge.entity;
 
+import com.mindbridge.entity.enums.Category;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,8 @@ public class ChatRoomEntity {
     private Long id;
 
     private String roomName;
+
+    private Category category;
 
     private LocalDateTime expiredAt;
 }

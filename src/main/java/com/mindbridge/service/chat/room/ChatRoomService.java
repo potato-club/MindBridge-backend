@@ -7,7 +7,9 @@ import com.mindbridge.dto.ResponseDto.chat.ChatRoomListResponseDto;
 public interface ChatRoomService {
     ChatRoomCreateResponseDto createChatRoom(Long userId, ChatRoomCreateRequestDto chatRoomCreateRequestDto);
 
-    ChatRoomListResponseDto getChatRoomList(Long userId);
+    ChatRoomListResponseDto getMyChatRoomList(Long userId);
+
+    ChatRoomListResponseDto getChatRoomList(String category);
 
     void deleteExpiredChatRooms();
 }

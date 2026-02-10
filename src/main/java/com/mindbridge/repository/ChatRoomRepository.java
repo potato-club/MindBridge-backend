@@ -2,6 +2,7 @@ package com.mindbridge.repository;
 
 import com.mindbridge.dto.ChatRoom;
 import com.mindbridge.entity.ChatRoomEntity;
+import com.mindbridge.entity.enums.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -37,7 +38,11 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoomEntity, Long> 
       AND cr.expiredAt > CURRENT_TIMESTAMP
     ORDER BY cm.createdAt DESC
 """)
-    List<ChatRoom> getChatRoomList(@Param("userId") Long userId);
+    List<ChatRoom> getMyChatRoomList(@Param("userId") Long userId);
+
+    List<ChatRoomEntity> findByActiveTrueOrderByCreatedAtDesc();
+
+    List<ChatRoomEntity> findByTopicAndActiveTrueOrderByCreatedAtDesc(Category category);
 
     List<ChatRoomEntity> findByExpiredAtBefore(LocalDateTime time);
 }
