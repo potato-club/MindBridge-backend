@@ -1,9 +1,16 @@
 package com.mindbridge.dto.ResponseDto.chat;
 
-import com.mindbridge.dto.MyChatRoom;
+import com.mindbridge.entity.enums.Category;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 public record ChatRoomListResponseDto(
-        List<MyChatRoom> chatRoomList
+        Long roomId,
+        Category category,
+        String roomName,
+        String contents,
+        Long userId,
+        String username,
+        String profileImgUrl,
+        LocalDateTime expiredAt
 ) {}

@@ -2,7 +2,9 @@ package com.mindbridge.controller.chat;
 
 import com.mindbridge.dto.RequestDto.chat.ChatRoomCreateRequestDto;
 import com.mindbridge.dto.ResponseDto.chat.ChatRoomCreateResponseDto;
+import com.mindbridge.dto.ResponseDto.chat.ChatMyRoomListResponseDto;
 import com.mindbridge.dto.ResponseDto.chat.ChatRoomListResponseDto;
+import com.mindbridge.entity.enums.Category;
 import com.mindbridge.jwt.CustomUserDetails;
 import com.mindbridge.service.chat.room.ChatRoomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,15 +34,15 @@ public class ChatController {
 
     @GetMapping("/room/list/my")
     @Operation(summary = "사용자의 채팅방 list 조회 by 조민기")
-    public ResponseEntity<ChatRoomListResponseDto> getMyChatRoomList(
+    public ResponseEntity<ChatMyRoomListResponseDto> getMyChatRoomList(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
         return ResponseEntity.ok(chatRoomService.getMyChatRoomList(userDetails.getId()));
     }
 
     @GetMapping("/room/list")
     @Operation(summary = "주제별 채팅방 list 조회 by 조민기")
-    public ResponseEntity<ChatRoomListResponseDto> getChatRoomList(
-            @RequestParam(defaultValue = "ALL") String category
+    public ResponseEntity<List<ChatRoomListResponseDto>> getChatRoomList(
+            @RequestParam(required = false) Category category
     ) {
         return ResponseEntity.ok(chatRoomService.getChatRoomList(category));
     }
