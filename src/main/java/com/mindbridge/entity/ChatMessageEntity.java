@@ -7,28 +7,22 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "chat_messages")
-public class ChatMessageEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class ChatMessageEntity extends BaseEntity{
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    private ChatRoomEntity chatRoomId;
 
-    private Long chatRoomId;
-
-    private Long senderId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity senderId;
 
     private ChatMessageType messageType;
 
     private String content;
-
-    private LocalDateTime createdAt;
-
-
 }

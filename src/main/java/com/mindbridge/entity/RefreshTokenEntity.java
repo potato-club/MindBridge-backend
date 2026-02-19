@@ -5,22 +5,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "chat_room_members")
-public class ChatRoomMemberEntity extends BaseEntity{
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_id", nullable = false)
-    private ChatRoomEntity chatRoomId;
-
+@AllArgsConstructor
+@Builder
+@Table(name ="refresh_token")
+public class RefreshTokenEntity extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity userId;
 
-    private Integer unreadCount;
+    private String token;
 
+    @CreationTimestamp
+    private LocalDateTime expiryDate;
 }
