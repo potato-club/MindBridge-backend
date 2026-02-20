@@ -3,21 +3,18 @@ package com.mindbridge.entity;
 import com.mindbridge.entity.enums.Category;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "post") // 테이블 이름 지정
+@Table(name = "post")
 public class PostEntity extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity userId;
+    private UserEntity user;
 
     @Enumerated(EnumType.STRING)
     private Category category;

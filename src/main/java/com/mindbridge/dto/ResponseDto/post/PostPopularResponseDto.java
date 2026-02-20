@@ -1,4 +1,4 @@
-package com.mindbridge.dto.ResponseDto;
+package com.mindbridge.dto.ResponseDto.post;
 
 public record PostPopularResponseDto(
         long id,

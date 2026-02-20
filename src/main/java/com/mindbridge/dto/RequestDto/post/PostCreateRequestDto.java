@@ -1,4 +1,4 @@
-package com.mindbridge.dto.RequestDto;
+package com.mindbridge.dto.RequestDto.post;
 
 import com.mindbridge.entity.enums.Category;
 

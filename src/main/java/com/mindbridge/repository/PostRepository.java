@@ -1,7 +1,7 @@
 package com.mindbridge.repository;
 
-import com.mindbridge.dto.ResponseDto.PostListResponseDto;
-import com.mindbridge.dto.ResponseDto.PostResponseDto;
+import com.mindbridge.dto.ResponseDto.post.PostListResponseDto;
+import com.mindbridge.dto.ResponseDto.post.PostResponseDto;
 import com.mindbridge.entity.PostEntity;
 import com.mindbridge.entity.enums.Category;
 import org.springframework.data.domain.Page;

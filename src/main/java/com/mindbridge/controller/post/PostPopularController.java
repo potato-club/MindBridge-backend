@@ -1,6 +1,6 @@
 package com.mindbridge.controller.post;
 
-import com.mindbridge.dto.ResponseDto.PostPopularResponseDto;
+import com.mindbridge.dto.ResponseDto.post.PostPopularResponseDto;
 import com.mindbridge.service.post.Popular.PostPopularService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

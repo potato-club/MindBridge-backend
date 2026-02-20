@@ -1,4 +1,4 @@
-package com.mindbridge.dto.RequestDto;
+package com.mindbridge.dto.RequestDto.post;
 
 public record PostUpdateRequestDto(
         String title,
