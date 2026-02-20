@@ -15,18 +15,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name = "comment")
-public class CommentEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CommentEntity extends BaseEntity{
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", nullable = false)
+    private PostEntity postId;
 
-    @Column(name = "post_id")
-    private Long postId;
-
-
-    @Column(name = "user_id")
-    private Long userId;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity userId;
 
     @Column(name = "parent_id")
     private Long parentId;
@@ -40,12 +36,7 @@ public class CommentEntity {
     @Column(name = "like_count")
     private int likeCount;
 
-    @CreationTimestamp
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
     public void update (String content) {
         this.content = content;
     }
-
 }

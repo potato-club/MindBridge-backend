@@ -13,15 +13,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name = "post") // 테이블 이름 지정
-public class PostEntity {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class PostEntity extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
+    private UserEntity userId;
 
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -45,12 +41,6 @@ public class PostEntity {
     @Setter
     @Column(name = "comment_count")
     private int commentCount;
-
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @CreationTimestamp
-    private LocalDateTime updatedAt;
 
     public void update(String title, String contents) {
         if (title != null) {
