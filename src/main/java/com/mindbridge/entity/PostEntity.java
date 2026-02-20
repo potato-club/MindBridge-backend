@@ -2,52 +2,50 @@ package com.mindbridge.entity;
 
 import com.mindbridge.entity.enums.Category;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "post") // 테이블 이름 지정
-public class PostEntity {
+@Table(name = "post")
+public class PostEntity extends BaseEntity{
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private Long userId;
+    private UserEntity user;
 
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "title", nullable = false, length = 50)
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;
+    @Column(name = "contents", nullable = false, columnDefinition = "TEXT")
+    private String contents;
 
+    @Column(name = "is_anonymous")
     private Boolean isAnonymous;
+
+    @Column(name = "view_count")
     private int viewCount;
+
+    @Setter
+    @Column(name = "like_count")
     private int likeCount;
+
+    @Setter
+    @Column(name = "comment_count")
     private int commentCount;
 
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @CreationTimestamp
-    private LocalDateTime updatedAt;
-
-    public void update(String title, String content) {
-        this.title = title;
-        this.content = content;
+    public void update(String title, String contents) {
+        if (title != null) {
+            this.title = title;
+        }
+        if (contents != null) {
+            this.contents = contents;
+        }
     }
 
     public void increaseViewCount() {
@@ -63,4 +61,5 @@ public class PostEntity {
             this.likeCount--;
         }
     }
+
 }

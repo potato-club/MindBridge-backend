@@ -11,11 +11,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "report")
-public class ReportEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private Long reporterId;
+public class ReportEntity extends BaseEntity{
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity reporterId;
+
+    @Column(name = "target_type")
     private TargetType targetType;
+
+    @Column(name = "target_id")
+    private Long targetId;
+
+    @Column(name = "reason")
     private String reason;
+
 }

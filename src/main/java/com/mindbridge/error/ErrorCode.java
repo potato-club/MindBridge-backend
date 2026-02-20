@@ -41,7 +41,21 @@ public enum ErrorCode {
 
     //게시글 관련 에러
     POST_NOT_FOUND(404, "POST-404", "게시글을 찾을 수 없습니다."),
-    COMMENT_NOT_FOUND(404, "POST-404", "댓글을 찾을 수 없습니다.");
+    COMMENT_NOT_FOUND(404, "POST-404", "댓글을 찾을 수 없습니다."),
+    NO_PERMISSION(403, "POST-403", "게시글 삭제 권한이 없습니다."),
+
+    //회원가입 관련 에러
+    DUPLICATE_LOGIN_ID(400, "USER-400", "이미 존재하는 아이디입니다."),
+    DUPLICATE_NICKNAME(400, "USER-400","이미 존재하는 닉네임입니다."),
+    DUPLICATE_PHONE_NUMBER(400, "USER-400","이미 등록된 전화번호입니다."),
+    PASSWORD_MISMATCH(400, "USER-400","비밀번호가 일치하지 않습니다."),
+
+    //JWT 관련
+    INVALID_JWT(401, "AUTH-401", "유효하지 않은 JWT 토큰입니다"),
+    JWT_EXPIRED(401, "AUTH-401", "JWT 토큰이 만료되었습니다"),
+    JWT_SIGNATURE_INVALID(401, "AUTH-401", "JWT 서명이 유효하지 않습니다"),
+    JWT_UNSUPPORTED(401, "AUTH-401", "지원되지 않는 JWT 토큰입니다"),
+    JWT_EMPTY(400, "AUTH-400", "토큰이 비어있습니다");
 
     private int status;
     private String errorCode;

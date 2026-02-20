@@ -1,37 +1,36 @@
 package com.mindbridge.entity;
 
 import com.mindbridge.entity.enums.Gender;
+import com.mindbridge.entity.enums.Role;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "users")
-public class UserEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UserEntity extends BaseEntity{
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Column(name = "profile_image")
+    private String profileImage;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "username", nullable = false)
+    private String username;
+
+    @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @Column(nullable = false, length = 50)
-    private String userid;
+    @Column(name = "login_id", nullable = false)
+    private String loginId;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(length = 30)
+    @Column(name = "phone_num")
     private String phoneNumber;
 
     @Column(name = "birth_date")
@@ -40,12 +39,9 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(nullable = false)
-    private boolean verified;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    @Column(name = "mileage")
+    private int mileage;
 }

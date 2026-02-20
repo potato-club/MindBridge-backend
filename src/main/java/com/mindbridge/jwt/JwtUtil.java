@@ -1,0 +1,125 @@
+package com.mindbridge.jwt;
+
+import com.mindbridge.error.ErrorCode;
+import com.mindbridge.error.customExceptions.UnauthorizedException;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.Date;
+import java.util.Map;
+
+@Component
+@Slf4j
+public class JwtUtil {
+    private final SecretKey secretKey;
+    private final Long accessExpMs;
+    private final Long refreshExpMs;
+
+    public JwtUtil(
+            @Value("${jwt.secret}") String secret,
+            @Value("${jwt.token.access-expiration-time}") Long access,
+            @Value("${jwt.token.refresh-expiration-time}") Long refresh) {
+        secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        accessExpMs = access;
+        refreshExpMs = refresh;
+    }
+
+    public String createAccessToken(long userId, String username, String nickname) {
+        Instant now = Instant.now();
+        Instant expiration = now.plusMillis(accessExpMs);
+
+        // claim
+        Claims claims = Jwts.claims();
+        claims.put("userId", userId);
+        claims.put("username", username);
+        claims.put("nickname", nickname);
+
+        return Jwts.builder()
+                .setHeaderParam("typ", "JWT")
+                .addClaims(claims)
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(expiration))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public String createRefreshToken(long userId) {
+        Instant now = Instant.now();
+        Instant expiration = now.plusMillis(refreshExpMs);
+
+        return Jwts.builder()
+                .setHeaderParam("typ", "JWT")
+                .addClaims(Map.of("userId", userId))
+                .setIssuedAt(Date.from(now))
+                .setExpiration(Date.from(expiration))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
+
+    public Claims validateAndGetClaims(String token) throws Exception {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+        } catch (ExpiredJwtException e) {
+            throw new UnauthorizedException(ErrorCode.JWT_EXPIRED);
+        } catch (MalformedJwtException e) {
+            throw new UnauthorizedException(ErrorCode.INVALID_JWT);
+        } catch (SignatureException e) {
+            throw new UnauthorizedException(ErrorCode.JWT_SIGNATURE_INVALID);
+        } catch (UnsupportedJwtException e) {
+            throw new UnauthorizedException(ErrorCode.JWT_UNSUPPORTED);
+        } catch (Exception e) {
+            log.error("JWT parsing error", e); // 서버 에러는 로그 남기기
+            throw new UnauthorizedException(ErrorCode.INTER_SERVER_ERROR);
+        }
+    }
+
+    public Long getUserId(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("userId", Long.class);
+    }
+
+    public String getUsername(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("username", String.class);
+    }
+
+    public String getNickname(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("nickname", String.class);
+    }
+}
