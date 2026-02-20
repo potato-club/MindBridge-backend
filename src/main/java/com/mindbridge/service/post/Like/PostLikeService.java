@@ -1,6 +1,6 @@
 package com.mindbridge.service.post.Like;
 
-import com.mindbridge.dto.ResponseDto.PostResponseDto;
+import com.mindbridge.dto.ResponseDto.post.PostResponseDto;
 
 import java.util.List;
 

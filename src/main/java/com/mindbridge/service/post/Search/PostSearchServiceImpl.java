@@ -1,6 +1,6 @@
 package com.mindbridge.service.post.Search;
 
-import com.mindbridge.dto.ResponseDto.PostListResponseDto;
+import com.mindbridge.dto.ResponseDto.post.PostListResponseDto;
 import com.mindbridge.dto.ResponseDto.PageResponseDto;
 import com.mindbridge.entity.enums.Category;
 import com.mindbridge.repository.PostRepository;

@@ -1,17 +1,20 @@
-package com.mindbridge.dto.ResponseDto;
+package com.mindbridge.dto.ResponseDto.post;
+
+import com.mindbridge.entity.enums.Category;
 
 import java.time.LocalDateTime;
 
-public record PostListResponseDto(
-        long id,
+public record PostResponseDto(
+        Long id,
+        Category category,
         String writerName,
-        String nickname,
         String profileUrl,
+        String nickname,
         String title,
         String contents,
         Boolean isAnonymous,
         LocalDateTime createdAt,
         int viewCount,
         int likeCount,
-        int CommentCount
+        int commentCount
 ) {}

@@ -1,9 +1,9 @@
 package com.mindbridge.controller.post;
 
-import com.mindbridge.dto.RequestDto.PostCreateRequestDto;
-import com.mindbridge.dto.RequestDto.PostUpdateRequestDto;
-import com.mindbridge.dto.ResponseDto.PostListResponseDto;
-import com.mindbridge.dto.ResponseDto.PostResponseDto;
+import com.mindbridge.dto.RequestDto.post.PostCreateRequestDto;
+import com.mindbridge.dto.RequestDto.post.PostUpdateRequestDto;
+import com.mindbridge.dto.ResponseDto.post.PostListResponseDto;
+import com.mindbridge.dto.ResponseDto.post.PostResponseDto;
 import com.mindbridge.dto.ResponseDto.PageResponseDto;
 import com.mindbridge.entity.enums.Category;
 import com.mindbridge.jwt.CustomUserDetails;

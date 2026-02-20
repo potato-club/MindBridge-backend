@@ -1,16 +1,18 @@
 package com.mindbridge.service.post.CRUD;
 
-import com.mindbridge.dto.RequestDto.PostCreateRequestDto;
-import com.mindbridge.dto.ResponseDto.PostListResponseDto;
-import com.mindbridge.dto.ResponseDto.PostResponseDto;
-import com.mindbridge.dto.RequestDto.PostUpdateRequestDto;
+import com.mindbridge.dto.RequestDto.post.PostCreateRequestDto;
+import com.mindbridge.dto.ResponseDto.post.PostListResponseDto;
+import com.mindbridge.dto.ResponseDto.post.PostResponseDto;
+import com.mindbridge.dto.RequestDto.post.PostUpdateRequestDto;
 import com.mindbridge.dto.ResponseDto.PageResponseDto;
 import com.mindbridge.entity.PostEntity;
+import com.mindbridge.entity.UserEntity;
 import com.mindbridge.entity.enums.Category;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.PostNotFoundException;
 import com.mindbridge.mapper.PostMapper;
 import com.mindbridge.repository.PostRepository;
+import com.mindbridge.repository.UserRepository;
 import com.mindbridge.service.post.PostRedisService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,12 +27,18 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final PostRedisService redisService;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
     public PostResponseDto createPost(long userId, PostCreateRequestDto requestDTO) {
-        PostEntity post = postMapper.toEntity(userId, requestDTO);
+
+        UserEntity user = userRepository.getReferenceById(userId);
+
+        PostEntity post = postMapper.toEntity(user, requestDTO);
+
         PostEntity saved  = postRepository.save(post);
+
         return postMapper.toDTO(saved);
     }
 

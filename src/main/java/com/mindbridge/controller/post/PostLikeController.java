@@ -1,6 +1,6 @@
 package com.mindbridge.controller.post;
 
-import com.mindbridge.dto.ResponseDto.PostResponseDto;
+import com.mindbridge.dto.ResponseDto.post.PostResponseDto;
 import com.mindbridge.jwt.CustomUserDetails;
 import com.mindbridge.service.post.Like.PostLikeService;
 import io.swagger.v3.oas.annotations.Operation;
