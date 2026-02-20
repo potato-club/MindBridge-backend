@@ -1,5 +1,6 @@
 package com.mindbridge.controller;
 
+import com.mindbridge.jwt.CustomUserDetails;
 import com.mindbridge.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ public class BookmarkController {
 
     @PostMapping("/{postId}")
     public ResponseEntity<Void> addBookmark(
-            @AuthenticationPrincipal CustomUserDetail customUserDetail,
+            @AuthenticationPrincipal CustomUserDetails customUserDetail,
             @PathVariable Long postId) {
 
         Long userId = customUserDetail.getId();
@@ -25,12 +26,12 @@ public class BookmarkController {
 
     @GetMapping("/{postId}")
     public ResponseEntity<Boolean> isBookmarked(
-            @AuthenticationPrincipal CustomUserDetail customUserDetail,
+            @AuthenticationPrincipal CustomUserDetails customUserDetail,
             @PathVariable Long postId) {
 
         Long userId = customUserDetail.getId();
 
-        boolean result = bookmarkService.isBookmarkde(userId, postId);
+        boolean result = bookmarkService.isBookmarked(userId, postId);
         return ResponseEntity.ok(result);
     }
 

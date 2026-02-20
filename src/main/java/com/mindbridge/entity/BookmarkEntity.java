@@ -19,11 +19,11 @@ public class BookmarkEntity extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity userId;
+    private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    private PostEntity postId;
+    private PostEntity post;
 
     @CreationTimestamp
     private LocalDateTime recordAt;

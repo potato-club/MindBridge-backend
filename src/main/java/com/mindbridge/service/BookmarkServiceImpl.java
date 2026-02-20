@@ -1,10 +1,13 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.ResponseDto.PostResponseDto;
+import com.mindbridge.dto.ResponseDto.post.PostResponseDto;
 import com.mindbridge.entity.BookmarkEntity;
 import com.mindbridge.entity.PostEntity;
+import com.mindbridge.entity.UserEntity;
 import com.mindbridge.mapper.PostMapper;
 import com.mindbridge.repository.BookmarkRepository;
+import com.mindbridge.repository.PostRepository;
+import com.mindbridge.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +19,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BookmarkServiceImpl implements BookmarkService{
     private final BookmarkRepository bookmarkRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
     private final PostMapper postMapper;
     private final RedisTemplate<String, String> redisTemplate;
 
@@ -33,9 +38,14 @@ public class BookmarkServiceImpl implements BookmarkService{
             throw new IllegalStateException("이미 북마크한 게시글입니다.");
         }
 
+        UserEntity user = userRepository.getReferenceById(userId);
+
+        PostEntity post = postRepository.getReferenceById(postId);
+
+
         BookmarkEntity bookmarkEntity = BookmarkEntity.builder()
-                .userId(userId)
-                .postId(postId)
+                .user(user)
+                .post(post)
                 .build();
         bookmarkRepository.save(bookmarkEntity);
 
@@ -44,7 +54,7 @@ public class BookmarkServiceImpl implements BookmarkService{
 
     @Override
     @Transactional
-    public boolean isBookmarkde(Long userId, Long postId) {
+    public boolean isBookmarked(Long userId, Long postId) {
         String key = getKey(userId, postId);
 
         if (Boolean.TRUE.equals(redisTemplate.hasKey(key))){
