@@ -1,6 +1,6 @@
 package com.mindbridge.config.websocket;
 
-import com.mindbridge.entity.UserEntity;
+import com.mindbridge.entity.user.UserEntity;
 import com.mindbridge.jwt.JwtUtil;
 import com.mindbridge.repository.UserRepository;
 import io.jsonwebtoken.Claims;

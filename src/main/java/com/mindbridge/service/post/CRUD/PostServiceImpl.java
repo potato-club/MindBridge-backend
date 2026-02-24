@@ -6,7 +6,7 @@ import com.mindbridge.dto.ResponseDto.post.PostResponseDto;
 import com.mindbridge.dto.RequestDto.post.PostUpdateRequestDto;
 import com.mindbridge.dto.ResponseDto.PageResponseDto;
 import com.mindbridge.entity.PostEntity;
-import com.mindbridge.entity.UserEntity;
+import com.mindbridge.entity.user.UserEntity;
 import com.mindbridge.entity.enums.Category;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.PostNotFoundException;

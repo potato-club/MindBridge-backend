@@ -1,5 +1,8 @@
 package com.mindbridge.entity.post;
 
+import com.mindbridge.entity.PostEntity;
+import com.mindbridge.entity.user.BaseEntity;
+import com.mindbridge.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "bookmark")
-public class BookmarkEntity extends BaseEntity{
+public class BookmarkEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
