@@ -4,14 +4,12 @@ import com.mindbridge.dto.LoginTokens;
 import com.mindbridge.dto.requestDto.LoginRequestDto;
 import com.mindbridge.dto.responseDto.TokenResponseDto;
 import com.mindbridge.dto.requestDto.SignupRequestDto;
-import com.mindbridge.entity.user.RefreshToken;
 import com.mindbridge.entity.user.UserEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.CustomException;
 import com.mindbridge.error.customExceptions.UnauthorizedException;
 import com.mindbridge.error.customExceptions.UserNotFoundException;
 import com.mindbridge.jwt.JwtUtil;
-import com.mindbridge.repository.RefreshTokenRepository;
 import com.mindbridge.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +23,6 @@ import java.time.LocalDateTime;
 @Service
 public class AuthService{
 
-    private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -76,56 +73,54 @@ public class AuthService{
         }
 
         Long userId = user.getId();
-        String username = user.getUsername();
-        String nickname = user.getNickname();
 
-        String accessToken = jwtUtil.createAccessToken(userId, username, nickname);
+        String accessToken = jwtUtil.createAccessToken(
+                userId,
+                user.getUsername(),
+                user.getNickname()
+        );
+
         String refreshToken = jwtUtil.createRefreshToken(userId);
 
         LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(refreshExpirationTime);
 
-        RefreshToken saveToken = refreshTokenRepository.findByUserId(userId).orElse(null);
 
-        if(saveToken == null) {
-            refreshTokenRepository.save(
-                    RefreshToken.builder()
-                            .userId(userId)
-                            .token(passwordEncoder.encode(refreshToken))
-                            .expiredAt(expiresAt)
-                            .build()
-            );
-        } else {
-            saveToken.update(passwordEncoder.encode(refreshToken), expiresAt);
-        }
+        user.updateRefreshToken(
+                passwordEncoder.encode(refreshToken),
+                expiresAt
+        );
 
         return new LoginTokens(accessToken, refreshToken);
     }
 
+    @Transactional
     public TokenResponseDto reissue(String refreshToken) {
         if (!jwtUtil.validateToken(refreshToken)) {
             throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
         Long userId = jwtUtil.getUserId(refreshToken);
-        RefreshToken savedToken = refreshTokenRepository.findByUserId(userId).orElseThrow(() ->
+        UserEntity user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException(ErrorCode.INVALID_REFRESH_TOKEN));
 
-        if(!passwordEncoder.matches(refreshToken, savedToken.getToken())) {
+        if(!passwordEncoder.matches(refreshToken, user.getRefreshToken())) {
             throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        if (savedToken.getExpiredAt().isBefore(LocalDateTime.now())) {
-            refreshTokenRepository.delete(savedToken);
+        if (user.getRefreshTokenExpiredAt().isBefore(LocalDateTime.now())) {
+            user.updateRefreshToken(null, null);
             throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        UserEntity user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
+        String newAccessToken = jwtUtil.createAccessToken(
+                userId,
+                user.getUsername(),
+                user.getNickname()
+        );
 
-        String newAccessToken = jwtUtil.createAccessToken(userId, user.getUsername(), user.getNickname());
         String newRefreshToken = jwtUtil.createRefreshToken(userId);
 
-        savedToken.update(
+        user.updateRefreshToken(
                 passwordEncoder.encode(newRefreshToken),
                 LocalDateTime.now()
                         .plusSeconds(refreshExpirationTime)

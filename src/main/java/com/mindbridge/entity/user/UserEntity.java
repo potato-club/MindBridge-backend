@@ -1,6 +1,7 @@
 package com.mindbridge.entity.user;
 
 import com.mindbridge.entity.enums.Gender;
+import com.mindbridge.entity.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,32 +10,28 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Table(name = "users")
-public class UserEntity extends BaseEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class UserEntity extends BaseEntity{
 
-    @Column(name = "profile_image_id", nullable = true)
-    private Long profileImageId;
+    @Column(name = "profile_image")
+    private String profileImage;
 
-    @Column(name = "username", nullable = false, length = 50)
+    @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name = "nickname", nullable = false, length = 50)
+    @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @Column(name = "login_id", nullable = false, length = 50)
+    @Column(name = "login_id", nullable = false)
     private String loginId;
 
-    @Column(name = "password", nullable = false, length = 255)
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "phonenum", length = 30)
+    @Column(name = "phone_num")
     private String phoneNumber;
 
     @Column(name = "birth_date")
@@ -43,18 +40,21 @@ public class UserEntity extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(name = "verified", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     private boolean verified;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    @Column(name = "mileage")
+    private int mileage;
 
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @Column(nullable = false)
-    private boolean isDeleted = false;
-
-    @Column(name = "refresh_token", length = 512)
+    @Column(length = 500)
     private String refreshToken;
+
+    private LocalDateTime refreshTokenExpiredAt;
+
+    public void updateRefreshToken(String refreshToken, LocalDateTime expiredAt) {
+        this.refreshToken = refreshToken;
+        this.refreshTokenExpiredAt = expiredAt;
+    }
 }

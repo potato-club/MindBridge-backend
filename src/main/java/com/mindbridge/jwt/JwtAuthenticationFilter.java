@@ -31,6 +31,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
+    public boolean shouldNotFilter(HttpServletRequest request) {
+        return request.getRequestURI().startsWith("/ws");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
         AntPathMatcher pathMatcher = new AntPathMatcher();
