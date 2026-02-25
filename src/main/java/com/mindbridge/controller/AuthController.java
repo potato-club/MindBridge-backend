@@ -1,17 +1,25 @@
 package com.mindbridge.controller;
 
-import com.mindbridge.dto.RequestDto.LoginRequestDto;
-import com.mindbridge.dto.ResponseDto.ApiResponseDto;
-import com.mindbridge.dto.ResponseDto.LoginResponseDto;
-import com.mindbridge.dto.ResponseDto.TokenResponseDto;
-import com.mindbridge.dto.RequestDto.SignupRequestDto;
-import com.mindbridge.dto.ResponseDto.UserResponseDto;
-import com.mindbridge.entity.UserEntity;
+import static com.mindbridge.config.SecurityConstants.*;
+
+import com.mindbridge.dto.LoginTokens;
+import com.mindbridge.dto.requestDto.*;
+import com.mindbridge.dto.responseDto.ApiResponseDto;
+import com.mindbridge.dto.responseDto.LoginResponseDto;
+import com.mindbridge.dto.responseDto.TokenResponseDto;
+import com.mindbridge.dto.responseDto.UserResponseDto;
+import com.mindbridge.entity.user.UserEntity;
+import com.mindbridge.error.ErrorCode;
+import com.mindbridge.error.customExceptions.CustomException;
+import com.mindbridge.jwt.CustomUserDetails;
 import com.mindbridge.service.AuthService;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,6 +27,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
+
+    @Value("${jwt.refresh-expiration-ms}")
+    private Long refreshExpMs;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponseDto<UserResponseDto>> signup(@Valid @RequestBody SignupRequestDto req) {
@@ -29,36 +40,78 @@ public class AuthController {
         );
     }
 
-    @GetMapping("/check-id")
-    public ResponseEntity<Boolean> checkDuplicateId(@RequestParam String loginId) {
-        boolean isDuplicate = authService.isDuplicateLoginId(loginId);
-        return ResponseEntity.ok(isDuplicate);
+    @PostMapping("/check-id")
+    public ResponseEntity<ApiResponseDto<Boolean>> checkDuplicateLoginId(@Valid @RequestBody CheckLoginIdRequestDto requestDto) {
+        boolean isDuplicate = authService.isDuplicateLoginId(requestDto.getLoginId());
+
+        if (isDuplicate) {
+            throw new CustomException(ErrorCode.DUPLICATE_LOGIN_ID);
+        }
+        return ResponseEntity.ok(new ApiResponseDto<>(true, "사용 가능한 아이디입니다.", null));
     }
 
-    @GetMapping("/check-nickname")
-    public ResponseEntity<Boolean> checkDuplicateNickname(@RequestParam String nickname) {
-        boolean isDuplicate = authService.isDuplicateNickname(nickname);
-        return ResponseEntity.ok(isDuplicate);
+    @PostMapping("/check-nickname")
+    public ResponseEntity<ApiResponseDto<String>> checkDuplicateNickname(@Valid @RequestBody CheckNicknameRequestDto requestDto) {
+        boolean isDuplicate = authService.isDuplicateNickname(requestDto.getNickname());
+
+        if (isDuplicate) {
+            throw new CustomException(ErrorCode.DUPLICATE_NICKNAME);
+        }
+        return ResponseEntity.ok(new ApiResponseDto<>(true, "사용 가능한 닉네임입니다.", null));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(
-            @RequestBody LoginRequestDto req,
-            HttpServletResponse httpServletResponse) {
-        LoginResponseDto loginResponseDto = authService.login(req, httpServletResponse);
-        return ResponseEntity.ok(loginResponseDto);
+    public ResponseEntity<ApiResponseDto<LoginResponseDto>> login(
+            @Valid @RequestBody LoginRequestDto req) {
+
+        LoginTokens tokens = authService.login(req);
+
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", tokens.refreshToken())
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(refreshExpMs)
+                .sameSite("None")
+                .build();
+
+        return ResponseEntity.ok()
+                .header(AUTHORIZATION_HEADER, BEARER_PREFIX + tokens.accessToken())
+                .header(HttpHeaders.SET_COOKIE, refreshCookie.toString())
+                .body(ApiResponseDto.success("로그인 성공", new LoginResponseDto(tokens.accessToken())));
     }
 
     @PostMapping("/reissue")
     public ResponseEntity<TokenResponseDto> reissue(
             @CookieValue("refreshToken") String refreshToken) {
-        TokenResponseDto tokenResponseDto = authService.reissue(refreshToken);
+        TokenResponseDto tokens = authService.reissue(refreshToken);
+        ResponseCookie cookie =
+                ResponseCookie.from(
+                                "refreshToken",
+                                tokens.refreshToken()
+                        )
+                        .httpOnly(true)
+                        .path("/")
+                        .maxAge(refreshExpMs)
+                        .sameSite("None")
+                        .build();
 
-        return ResponseEntity.ok(tokenResponseDto);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(tokens);
     }
 
-//    @PostMapping("/logout/{loginId}")
-//    public ResponseEntity<ApiResponseDto> logout(
-//            @PathVariable String loginId
-//    )
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponseDto<String>> logout(
+            @RequestHeader(value = "Authorization", required = false) String token
+    ) {
+        return ResponseEntity.ok(ApiResponseDto.success("로그아웃이 완료되었습니다."));
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<ApiResponseDto<Void>> withdraw(@RequestBody WithdrawRequestDto request,
+                                           @AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        authService.withdraw(userDetails.getId(), request.getPassword());
+        return ResponseEntity.ok(ApiResponseDto.success("회원탈퇴가 완료되었습니다.", null));
+    }
 }

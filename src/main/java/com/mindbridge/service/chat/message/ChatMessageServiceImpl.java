@@ -6,7 +6,7 @@ import com.mindbridge.dto.ResponseDto.chat.ChatMessageResponseDto;
 import com.mindbridge.dto.ResponseDto.chat.ChatRoomMessageResponseDto;
 import com.mindbridge.entity.ChatMessageEntity;
 import com.mindbridge.entity.ChatRoomEntity;
-import com.mindbridge.entity.UserEntity;
+import com.mindbridge.entity.user.UserEntity;
 import com.mindbridge.entity.enums.ChatMessageType;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.UserNotFoundException;

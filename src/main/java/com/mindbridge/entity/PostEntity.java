@@ -1,6 +1,8 @@
 package com.mindbridge.entity;
 
 import com.mindbridge.entity.enums.Category;
+import com.mindbridge.entity.user.BaseEntity;
+import com.mindbridge.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +12,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Table(name = "post")
-public class PostEntity extends BaseEntity{
+public class PostEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

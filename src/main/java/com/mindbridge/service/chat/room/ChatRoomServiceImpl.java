@@ -7,7 +7,7 @@ import com.mindbridge.dto.ResponseDto.chat.ChatMyRoomListResponseDto;
 import com.mindbridge.dto.ResponseDto.chat.ChatRoomListResponseDto;
 import com.mindbridge.entity.ChatRoomEntity;
 import com.mindbridge.entity.ChatRoomMemberEntity;
-import com.mindbridge.entity.UserEntity;
+import com.mindbridge.entity.user.UserEntity;
 import com.mindbridge.entity.enums.Category;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.CustomException;

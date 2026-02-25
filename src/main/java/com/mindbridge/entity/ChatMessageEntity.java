@@ -1,6 +1,8 @@
 package com.mindbridge.entity;
 
 import com.mindbridge.entity.enums.ChatMessageType;
+import com.mindbridge.entity.user.BaseEntity;
+import com.mindbridge.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "chat_messages")
-public class ChatMessageEntity extends BaseEntity{
+public class ChatMessageEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     private ChatRoomEntity chatRoomId;

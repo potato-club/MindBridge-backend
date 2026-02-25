@@ -4,7 +4,7 @@ import com.mindbridge.dto.RequestDto.post.PostCreateRequestDto;
 import com.mindbridge.dto.ResponseDto.post.PostPopularResponseDto;
 import com.mindbridge.dto.ResponseDto.post.PostResponseDto;
 import com.mindbridge.entity.PostEntity;
-import com.mindbridge.entity.UserEntity;
+import com.mindbridge.entity.user.UserEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

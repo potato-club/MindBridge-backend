@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final SecretKey secretKey;
+    private  SecretKey secretKey;
 
     public JwtAuthenticationFilter(@Value("${jwt.secret}") String signingKey) {
         this.secretKey = Keys.hmacShaKeyFor(signingKey.getBytes(StandardCharsets.UTF_8));
@@ -45,10 +45,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 || path.equals("/api/auth/signup")
                 || path.equals("/api/auth/login")
                 || path.equals("/api/auth/reissue")
+                || path.equals("/api/auth/logout")
                 || path.startsWith("/api/auth/check-id")
                 || path.startsWith("/api/auth/check-nickname")
-                || path.equals("/api/sms/send")
-                || path.equals("/api/sms/verify")
                 || pathMatcher.match("/swagger-ui/**", path)
                 || pathMatcher.match("/v3/api-docs/**", path)) {
             filterChain.doFilter(request, response);
@@ -78,14 +77,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String username = (String) claims.get("username");
         String nickname = (String) claims.get("nickname");
 
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));//임시로 role 설정
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));//임시로 role설정
 
         CustomUserDetails userDetails = new CustomUserDetails(
                 userId, username, nickname, authorities);
 
         UsernamePasswordAuthentication authentication = new UsernamePasswordAuthentication(userDetails, null, authorities);
 
-        // SecurityContext 에 Authentication 객체 추가
+        // SecurityContext에 Authentication 객체 추가
         SecurityContextHolder.getContext()
                 .setAuthentication(authentication);
         filterChain.doFilter(request, response);    // 필터 체인의 다음 필터 호룿

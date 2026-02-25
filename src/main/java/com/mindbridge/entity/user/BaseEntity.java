@@ -1,4 +1,4 @@
-package com.mindbridge.entity;
+package com.mindbridge.entity.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;

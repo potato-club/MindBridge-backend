@@ -1,4 +1,4 @@
-package com.mindbridge.entity;
+package com.mindbridge.entity.user;
 
 import com.mindbridge.entity.enums.Gender;
 import com.mindbridge.entity.enums.Role;
@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -42,6 +43,18 @@ public class UserEntity extends BaseEntity{
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private boolean verified;
+
     @Column(name = "mileage")
     private int mileage;
+
+    @Column(length = 500)
+    private String refreshToken;
+
+    private LocalDateTime refreshTokenExpiredAt;
+
+    public void updateRefreshToken(String refreshToken, LocalDateTime expiredAt) {
+        this.refreshToken = refreshToken;
+        this.refreshTokenExpiredAt = expiredAt;
+    }
 }

@@ -1,6 +1,8 @@
 package com.mindbridge.entity;
 
 import com.mindbridge.entity.enums.MileageType;
+import com.mindbridge.entity.user.BaseEntity;
+import com.mindbridge.entity.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Table(name ="mileage_transaction")
-public class MileageTransactionEntity extends BaseEntity{
+public class MileageTransactionEntity extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

@@ -2,7 +2,7 @@ package com.mindbridge.repository;
 
 import com.mindbridge.entity.ChatRoomEntity;
 import com.mindbridge.entity.ChatRoomMemberEntity;
-import com.mindbridge.entity.UserEntity;
+import com.mindbridge.entity.user.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

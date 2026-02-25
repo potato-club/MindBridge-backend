@@ -1,26 +1,21 @@
 package com.mindbridge.service;
 
-import com.mindbridge.dto.RequestDto.LoginRequestDto;
-import com.mindbridge.dto.ResponseDto.ApiResponseDto;
-import com.mindbridge.dto.ResponseDto.LoginResponseDto;
-import com.mindbridge.dto.ResponseDto.TokenResponseDto;
-import com.mindbridge.dto.RequestDto.SignupRequestDto;
-import com.mindbridge.dto.ResponseDto.UserResponseDto;
-import com.mindbridge.entity.UserEntity;
+import com.mindbridge.dto.LoginTokens;
+import com.mindbridge.dto.requestDto.LoginRequestDto;
+import com.mindbridge.dto.responseDto.TokenResponseDto;
+import com.mindbridge.dto.requestDto.SignupRequestDto;
+import com.mindbridge.entity.user.UserEntity;
 import com.mindbridge.error.ErrorCode;
 import com.mindbridge.error.customExceptions.CustomException;
 import com.mindbridge.error.customExceptions.UnauthorizedException;
 import com.mindbridge.error.customExceptions.UserNotFoundException;
 import com.mindbridge.jwt.JwtUtil;
 import com.mindbridge.repository.UserRepository;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -33,7 +28,8 @@ public class AuthService{
     private final JwtUtil jwtUtil;
 
     @Value("${jwt.token.refresh-expiration-time}")
-    private Long refreshExpMs;
+    private long refreshExpirationTime;
+
 
     public UserEntity signup(SignupRequestDto req) {
         // 아이디 중복 확인
@@ -51,71 +47,85 @@ public class AuthService{
             throw new CustomException(ErrorCode.DUPLICATE_PHONE_NUMBER);
         }
 
-        // 비밀번호 확인
-        if (!req.getPassword().equals(req.getConfirmPassword())) {
-            throw new CustomException(ErrorCode.PASSWORD_MISMATCH);
-        }
-
         // 유저 저장
         UserEntity user = UserEntity.builder()
                 .loginId(req.getLoginId())
                 .username(req.getUsername())
-                .nickname(req.getUsername())
+                .nickname(req.getNickname())
                 .password(passwordEncoder.encode(req.getPassword()))
                 .phoneNumber(req.getPhoneNumber())
                 .gender(req.getGender())
                 .birthDate(req.getBirthDate())
                 .verified(false)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
 
         return userRepository.save(user);
     }
 
-    public LoginResponseDto login(LoginRequestDto req, HttpServletResponse httpServletResponse) {
-        String loginId = req.loginId();
-        String password = req.password();
+@Transactional
+    public LoginTokens login(LoginRequestDto req) {
 
-        UserEntity user = userRepository.findByLoginId(loginId)
+        UserEntity user = userRepository.findByLoginId(req.loginId())
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(password, user.getPassword())) {
+        if (!passwordEncoder.matches(req.password(), user.getPassword())) {
             throw new UnauthorizedException(ErrorCode.INVALID_PASSWORD);
         }
 
         Long userId = user.getId();
-        String username = user.getUsername();
-        String nickname = user.getNickname();
 
-        String accessToken = jwtUtil.createAccessToken(userId, username, nickname);
+        String accessToken = jwtUtil.createAccessToken(
+                userId,
+                user.getUsername(),
+                user.getNickname()
+        );
+
         String refreshToken = jwtUtil.createRefreshToken(userId);
 
-        httpServletResponse.setHeader("Authorization", "Bearer " + accessToken);
+        LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(refreshExpirationTime);
 
-        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
-                .httpOnly(true)
-                .secure(false)
-                .path("/")
-                .maxAge(refreshExpMs)
-                .sameSite("None")
-                .build();
-        httpServletResponse.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
-        return new LoginResponseDto(accessToken);
+        user.updateRefreshToken(
+                passwordEncoder.encode(refreshToken),
+                expiresAt
+        );
+
+        return new LoginTokens(accessToken, refreshToken);
     }
 
+    @Transactional
     public TokenResponseDto reissue(String refreshToken) {
         if (!jwtUtil.validateToken(refreshToken)) {
             throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
         Long userId = jwtUtil.getUserId(refreshToken);
-        String username = jwtUtil.getUsername(refreshToken);
-        String nickname = jwtUtil.getNickname(refreshToken);
+        UserEntity user = userRepository.findById(userId).orElseThrow(() ->
+                new UserNotFoundException(ErrorCode.INVALID_REFRESH_TOKEN));
 
-        String newAccessToken = jwtUtil.createAccessToken(userId, username, nickname);
-        return new TokenResponseDto(newAccessToken);
+        if(!passwordEncoder.matches(refreshToken, user.getRefreshToken())) {
+            throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        if (user.getRefreshTokenExpiredAt().isBefore(LocalDateTime.now())) {
+            user.updateRefreshToken(null, null);
+            throw new UnauthorizedException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        String newAccessToken = jwtUtil.createAccessToken(
+                userId,
+                user.getUsername(),
+                user.getNickname()
+        );
+
+        String newRefreshToken = jwtUtil.createRefreshToken(userId);
+
+        user.updateRefreshToken(
+                passwordEncoder.encode(newRefreshToken),
+                LocalDateTime.now()
+                        .plusSeconds(refreshExpirationTime)
+        );
+        return new TokenResponseDto(newAccessToken, newRefreshToken);
     }
 
     public boolean isDuplicateLoginId(String loginId) {
@@ -126,11 +136,15 @@ public class AuthService{
         return userRepository.existsByNickname(nickname);
     }
 
-//    public void logout(String loginId) {
-//        UserEntity user = userRepository.findByLoginId(loginId)
-//                .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND));
-//
-//        user.setRefreshToken(null);
-//        userRepository.save(user);
-//    }
+    @Transactional
+    public void withdraw(Long userId, String password) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new CustomException(ErrorCode.INVALID_PASSWORD);
+        }
+
+        userRepository.delete(user);
+    }
 }
